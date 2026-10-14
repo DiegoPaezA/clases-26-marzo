@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía 1 · Perspectiva de 1 y 2 puntos de fuga</title>
+<style>
+:root{
+  color-scheme: light;
+  --paper:#f6f4ee; --sheet:#fffefb; --ink:#1d2533; --muted:#5b6474; --line:#d8d3c4;
+  --pf1:#c0392b; --pf2:#1f5fa8; --pf3:#2e7d4f; --lh:#7a8494; --ok:#2e7d4f; --warn:#c77700;
+  --inst:#9e2a33; --soft1:rgba(192,57,43,.10); --soft2:rgba(31,95,168,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font:17px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background-image:linear-gradient(rgba(31,95,168,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(31,95,168,.05) 1px,transparent 1px);
+  background-size:24px 24px;}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 64px}
+h1,h2,h3,h4{line-height:1.2;margin:0}
+h2{font-size:1.65rem;margin:8px 0 6px}
+h3{font-size:1.2rem;margin:34px 0 10px;display:flex;gap:10px;align-items:baseline}
+h3 .n{font:600 .85rem/1 ui-monospace,Menlo,Consolas,monospace;color:#fff;background:var(--ink);padding:5px 7px;border-radius:4px}
+p{margin:.5em 0}
+small,.muted{color:var(--muted)}
+b.c1{color:var(--pf1)} b.c2{color:var(--pf2)}
+
+/* Encabezado tipo rótulo */
+.titleblock{margin:18px 0 10px;background:var(--sheet);border:2px solid var(--ink);display:grid;grid-template-columns:110px 1fr;}
+.titleblock .logo{border-right:2px solid var(--ink);display:flex;align-items:center;justify-content:center;padding:8px}
+.titleblock .logo img{width:88px;height:auto}
+.tb-main{display:grid;grid-template-rows:auto auto}
+.tb-title{padding:12px 16px;border-bottom:2px solid var(--ink)}
+.tb-title .kicker{font:600 .78rem/1.2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--inst)}
+.tb-title h1{font-size:1.7rem;margin-top:4px}
+.tb-cells{display:grid;grid-template-columns:repeat(4,1fr)}
+.tb-cells div{padding:7px 12px;border-right:1px solid var(--ink);font-size:.92rem}
+.tb-cells div:last-child{border-right:0}
+.tb-cells span{display:block;font:600 .68rem/1.3 ui-monospace,Menlo,Consolas,monospace;text-transform:uppercase;color:var(--muted)}
+@media (max-width:640px){
+  .titleblock{grid-template-columns:72px 1fr}.titleblock .logo img{width:58px}
+  .tb-title h1{font-size:1.3rem}
+  .tb-cells{grid-template-columns:1fr 1fr}.tb-cells div:nth-child(2){border-right:0}
+  .tb-cells div:nth-child(-n+2){border-bottom:1px solid var(--ink)}
+}
+
+nav.tabs{position:sticky;top:0;z-index:10;background:rgba(246,244,238,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);margin:0 -16px;padding:8px 16px;display:flex;gap:8px;overflow-x:auto}
+nav.tabs a{flex:none;text-decoration:none;color:var(--ink);font-weight:600;font-size:.9rem;padding:6px 12px;border:1.5px solid var(--ink);border-radius:999px;background:var(--sheet)}
+nav.tabs a:hover{background:var(--ink);color:#fff}
+
+.card{background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:14px 0}
+.note{border-left:5px solid var(--pf2);background:#eef3fa;padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0}
+.note.red{border-color:var(--pf1);background:#fbefed}
+.note.ok{border-color:var(--ok);background:#ecf5ef}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}.grid4{grid-template-columns:1fr 1fr}}
+
+.class-head{margin-top:44px;padding:18px;border-radius:12px;background:var(--ink);color:#fff}
+.class-head .kicker{font:600 .78rem/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+.class-head h2{color:#fff}
+.timeline{display:flex;margin-top:12px;border-radius:6px;overflow:hidden;font-size:.78rem;font-weight:600}
+.timeline div{padding:7px 6px;text-align:center;color:#fff;border-right:1px solid rgba(255,255,255,.35)}
+.timeline div:last-child{border-right:0}
+.timeline small{display:block;color:rgba(255,255,255,.8);font-weight:500}
+
+/* Figuras */
+figure{margin:14px 0;background:var(--sheet);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+figure svg{display:block;width:100%;height:auto;background:#fffefb}
+figcaption{padding:10px 14px;font-size:.9rem;color:var(--muted);border-top:1px solid var(--line)}
+.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);background:#faf8f2}
+.controls label{display:flex;align-items:center;gap:8px;font-size:.92rem}
+.controls input[type=range]{flex:1;min-width:180px;accent-color:var(--ink)}
+.controls .rng{flex:1 1 100%;display:flex;align-items:center;gap:10px}
+.controls .rng b{min-width:64px;font-variant-numeric:tabular-nums}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--ink)}
+.readout{padding:10px 14px;border-top:1px solid var(--line);font-size:.95rem;min-height:3.2em;background:#fff}
+.try{counter-reset:t;list-style:none;padding:0;margin:10px 0}
+.try li{counter-increment:t;position:relative;padding:6px 0 6px 38px}
+.try li::before{content:counter(t);position:absolute;left:0;top:5px;width:26px;height:26px;border-radius:50%;border:2px solid var(--ink);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+
+/* SVG */
+svg text{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.lbl{font-size:22px;font-weight:600;fill:var(--ink)}
+.lbl.s{font-size:18px}.lbl.xs{font-size:14px}
+.lbl.pf1{fill:var(--pf1)}.lbl.pf2{fill:var(--pf2)}.lbl.lhl{fill:var(--lh)}.lbl.okc{fill:var(--ok)}.lbl.warnc{fill:var(--warn)}
+.lh{stroke:var(--lh);stroke-width:2;stroke-dasharray:10 7;fill:none}
+.aux1{stroke:var(--pf1);stroke-width:1.6;opacity:.55;fill:none}
+.aux2{stroke:var(--pf2);stroke-width:1.6;opacity:.55;fill:none}
+.cons{stroke:var(--ink);stroke-width:1.6;opacity:.5;fill:none}
+.edge{stroke:var(--ink);stroke-width:3.4;stroke-linecap:round;fill:none}
+.edge1{stroke:var(--pf1);stroke-width:3.4;stroke-linecap:round;fill:none}
+.edge2{stroke:var(--pf2);stroke-width:3.4;stroke-linecap:round;fill:none}
+.thin{stroke-width:2.2}
+.hid{stroke:var(--muted);stroke-width:1.8;stroke-dasharray:6 6;fill:none}
+.fix{stroke:var(--ok);stroke-width:3.6;stroke-linecap:round;fill:none}
+.fixd{stroke:var(--ok);stroke-width:2;stroke-dasharray:6 5;fill:none}
+.bad{stroke:var(--warn);stroke-width:3.6;fill:none}
+.facef{fill:#e6ecf5}.facet{fill:rgba(90,100,120,.13)}.face1{fill:var(--soft1)}.face2{fill:var(--soft2)}
+.pfdot{fill:var(--pf1)}.pfdot2{fill:var(--pf2)}.inkdot{fill:var(--ink)}
+.sky{fill:#eaf1f8}.ground{fill:#efe9dc}.road{fill:#b9b4aa}.dash{fill:#fffefb}
+.post{stroke:#5a4632;stroke-linecap:round}
+.hit{fill:#fff;stroke:var(--pf1);stroke-width:2}
+.arc{stroke-width:2.5;fill:none}
+.handle{cursor:grab}
+.handle .hitc{fill:transparent}
+.handle .ring{stroke:#fff;stroke-width:3}
+.handle.grab{cursor:grabbing}
+.handle:hover .ring,.handle.grab .ring{stroke:#ffd54a}
+svg.drag{touch-action:none;user-select:none;-webkit-user-select:none}
+@keyframes pulse{0%,100%{r:12}50%{r:17}}
+.handle .halo{fill:none;stroke-width:2;opacity:.5;animation:pulse 1.8s ease-in-out infinite}
+
+/* Paso a paso */
+.stepnav{display:flex;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--line);background:#faf8f2;flex-wrap:wrap}
+.btn{font:600 .92rem/1 system-ui,sans-serif;padding:10px 14px;border-radius:8px;border:1.5px solid var(--ink);background:var(--sheet);color:var(--ink);cursor:pointer}
+.btn:hover{background:var(--ink);color:#fff}
+.btn:disabled{opacity:.35;cursor:default;background:var(--sheet);color:var(--ink)}
+.btn.primary{background:var(--ink);color:#fff}
+.dots{display:flex;gap:6px;margin-left:auto}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--ink)}
+.steptext{padding:12px 16px;background:#fff;border-top:1px solid var(--line);min-height:6.2em}
+.steptext h4{font-size:1.05rem;margin-bottom:4px}
+.stg{display:none}.stg.on{display:inline}
+.stg.cur .draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .8s ease forwards;animation-delay:var(--d,0s)}
+.stg.cur .fade{opacity:0;animation:fade .6s ease forwards;animation-delay:var(--d,0s)}
+.dimmed .stg:not(.cur) .aux1,.dimmed .stg:not(.cur) .aux2,.dimmed .stg:not(.cur) .cons{opacity:.18}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fade{to{opacity:1}}
+
+/* Quiz */
+.q{background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0}
+.q .qt{font-weight:600;margin-bottom:8px}
+.q .opts{display:grid;gap:8px}
+.q button.opt{text-align:left;font:inherit;padding:10px 12px;border-radius:8px;border:1.5px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+.q button.opt:hover{border-color:var(--ink)}
+.q button.opt.right{border-color:var(--ok);background:#ecf5ef}
+.q button.opt.wrong{border-color:var(--pf1);background:#fbefed}
+.q .fb{display:none;margin-top:10px;padding:10px 12px;border-radius:8px;background:#f2f0ea;font-size:.95rem}
+.q.done .fb{display:block}
+.score{font-weight:700}
+
+/* Error */
+.errgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:860px){.errgrid{grid-template-columns:1fr}}
+.errcard{background:var(--sheet);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.errcard svg{display:block;width:100%;height:auto;border-bottom:1px solid var(--line)}
+.errcard .body{padding:12px 14px}
+.errcard .fixlayer{opacity:0;transition:opacity .5s}
+.errcard.solved .fixlayer{opacity:1}
+
+/* Plancha */
+.plancha{background:var(--sheet);border:2px solid var(--ink);border-radius:12px;padding:0;margin:18px 0;overflow:hidden}
+.plancha .ph{background:repeating-linear-gradient(135deg,#1d2533,#1d2533 14px,#232c3c 14px,#232c3c 28px);color:#fff;padding:14px 18px}
+.plancha .ph .kicker{font:600 .75rem/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase;opacity:.8}
+.plancha .ph h4{font-size:1.25rem;margin-top:6px}
+.plancha .pb{padding:14px 18px}
+.stage{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:12px 0;border-top:1px dashed var(--line)}
+.stage:first-of-type{border-top:0}
+.stage .num{width:44px;height:44px;border-radius:8px;background:var(--ink);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.stage h5{font-size:1rem;margin:0 0 4px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.stage h5 .t{font:600 .75rem/1 ui-monospace,Menlo,Consolas,monospace;background:#efe9dc;padding:4px 7px;border-radius:4px}
+.stage ul{margin:4px 0 6px;padding-left:20px}
+.stage .ev{font-size:.88rem;color:var(--muted)}
+.stage label.chk{display:inline-flex;gap:8px;align-items:center;font-weight:600;font-size:.9rem;margin-top:4px;cursor:pointer}
+.stage.done .num{background:var(--ok)}
+.min{display:inline-block;background:var(--warn);color:#fff;font-size:.72rem;font-weight:700;padding:3px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em}
+
+table{width:100%;border-collapse:collapse;font-size:.94rem;background:var(--sheet)}
+th,td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+th{background:#efe9dc;font-size:.85rem;text-transform:uppercase;letter-spacing:.03em}
+.tablewrap{overflow-x:auto;border-radius:8px;margin:12px 0}
+.checklist{list-style:none;padding:0;margin:8px 0}
+.checklist li{padding:8px 0;border-bottom:1px dashed var(--line)}
+.checklist label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.checklist input{margin-top:4px;flex:none}
+.closing{background:#fff8e6;border:1.5px dashed var(--warn);border-radius:10px;padding:14px 16px;margin:16px 0}
+.closing b{color:var(--warn)}
+footer{margin-top:50px;padding-top:14px;border-top:2px solid var(--ink);font-size:.85rem;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.88rem;margin:8px 0}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:26px;height:0;border-top:3px solid}
+@media (max-width:600px){
+  figure > svg .lbl{font-size:34px}figure > svg .lbl.s{font-size:28px}figure > svg .lbl.xs{font-size:22px}
+  figure > svg .edge,figure > svg .edge1,figure > svg .edge2{stroke-width:5}
+  figure > svg .aux1,figure > svg .aux2,figure > svg .cons{stroke-width:2.6}
+  figure > svg .lh{stroke-width:3}figure > svg .hid{stroke-width:2.6}
+  .handle > *{transform:scale(1.7)}
+  .controls input[type=range]{min-width:110px}
+  .rotate-hint{display:block}
+}
+.rotate-hint{display:none;font-size:.85rem;background:#fff8e6;border:1px dashed var(--warn);border-radius:8px;padding:8px 12px;margin:10px 0}
+@media print{nav.tabs{display:none}.controls,.stepnav{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="titleblock" id="inicio">
+  <div class="logo"><img alt="Escudo Instituto Técnico Veintiséis de Marzo" src="data:image/png;base64,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"></div>
+  <div class="tb-main">
+    <div class="tb-title">
+      <div class="kicker">Dibujo Técnico · Guía 1 de 2 · Periodo 4</div>
+      <h1>Perspectiva de uno y dos puntos de fuga</h1>
+    </div>
+    <div class="tb-cells">
+      <div><span>Docente</span>Diego Ricardo Páez Ardila</div>
+      <div><span>Grado</span>Undécimo (11 ELEC)</div>
+      <div><span>Sesiones</span>Clases 1 y 2</div>
+      <div><span>Duración</span>2 × 55 min</div>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Secciones">
+  <a href="#inicio">Inicio</a>
+  <a href="#clase1">Clase 1 · Un punto</a>
+  <a href="#plancha1">Plancha 1</a>
+  <a href="#clase2">Clase 2 · Dos puntos</a>
+  <a href="#plancha2">Plancha 2</a>
+  <a href="#evaluacion">Evaluación</a>
+</nav>
+
+<section>
+  <p class="rotate-hint">Consejo: gira el celular en posición horizontal para ver las figuras más grandes y arrastrar los puntos con mayor precisión.</p>
+  <div class="card">
+    <h3 style="margin-top:0">Propósito de aprendizaje</h3>
+    <p>Al terminar esta guía podrás explicar por qué un dibujo en perspectiva produce sensación de profundidad, identificar la <b>línea de horizonte</b>, los <b>puntos de fuga</b> y las <b>líneas de fuga</b>, y construir en tu plancha prismas en perspectiva de <b>un punto</b> (objeto visto de frente) y de <b>dos puntos</b> (objeto visto desde una esquina).</p>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h4>Cómo usar esta guía</h4>
+      <p>La página funciona sin internet. Las figuras con <b class="c1">puntos de colores que laten</b> se pueden <b>arrastrar</b> con el dedo o el mouse. Las construcciones paso a paso se avanzan con los botones. Lo que veas aquí lo vas a trazar a mano, con regla, en tu plancha.</p>
+    </div>
+    <div class="card">
+      <h4>Materiales</h4>
+      <p>Dos planchas A4 con rótulo estándar (posición horizontal), lápiz HB o portaminas 0,5 mm, lápiz 2B o portaminas de mina blanda para repasar, regla de 30 cm, escuadras, borrador y sacapuntas.</p>
+    </div>
+  </div>
+  <div class="note">
+    <b>Código de colores de toda la guía.</b>
+    <div class="legend">
+      <span><i style="border-color:var(--lh);border-top-style:dashed"></i>Línea de horizonte (LH)</span>
+      <span><i style="border-color:var(--pf1)"></i>Familia que va al PF (o al PF izquierdo)</span>
+      <span><i style="border-color:var(--pf2)"></i>Familia que va al PF derecho</span>
+      <span><i style="border-color:var(--ink)"></i>Aristas frontales y verticales</span>
+      <span><i style="border-color:var(--muted);border-top-style:dashed"></i>Aristas ocultas</span>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= CLASE 1 ======================= -->
+<section id="clase1">
+  <div class="class-head">
+    <div class="kicker">Clase 1 · 55 minutos</div>
+    <h2>Perspectiva de un punto de fuga</h2>
+    <div class="timeline" aria-label="Distribución del tiempo">
+      <div style="flex:10;background:#3b6ea5">Explorar<small>10 min</small></div>
+      <div style="flex:8;background:#5b7f4a">Construcción<small>8 min</small></div>
+      <div style="flex:32;background:#9e2a33">Plancha 1<small>32 min</small></div>
+      <div style="flex:5;background:#c77700">Cierre<small>5</small></div>
+    </div>
+  </div>
+
+  <h3><span class="n">1.1</span>¿Por qué lo lejano se ve más pequeño?</h3>
+  <p>Un objeto real tiene ancho, alto y profundidad, pero la hoja solo tiene ancho y alto. Para representar la profundidad usamos un hecho que observas todos los días: <b>las líneas paralelas que se alejan de ti parecen juntarse</b> en un punto lejano. Ese punto es el <b>punto de fuga (PF)</b> y siempre está sobre la <b>línea de horizonte (LH)</b>, que corresponde a la altura de tus ojos.</p>
+  <figure>
+    <svg id="road" viewBox="0 0 800 420" aria-label="Carretera con postes en perspectiva"><g class="layer"></g></svg>
+    <div class="controls">
+      <div class="rng"><span>Altura de tus ojos</span><input id="eye" type="range" min="0.4" max="8" step="0.1" value="1.6"><b id="eyeV">1,6 m</b></div>
+    </div>
+    <div class="readout" id="eyeOut"></div>
+  </figure>
+  <ol class="try">
+    <li>Mueve el deslizador y observa: la LH <b>siempre</b> pasa por el PF, y los bordes de la carretera y la línea de las puntas de los postes siempre llegan al mismo PF.</li>
+    <li>Con los ojos a 1,6 m, la LH corta todos los postes a la misma altura, sin importar qué tan lejos estén. ¿Qué pasa cuando subes los ojos por encima de 3 m?</li>
+  </ol>
+
+  <h3><span class="n">1.2</span>Los cuatro elementos que debes reconocer</h3>
+  <div class="grid4" id="elements"></div>
+
+  <h3><span class="n">1.3</span>Laboratorio: mueve el punto de fuga</h3>
+  <p>Arrastra el <b class="c1">PF</b>, mueve la caja desde su centro o cámbiale el tamaño desde la esquina inferior derecha. Usa el deslizador para cambiar la profundidad.</p>
+  <figure>
+    <svg id="lab1" class="drag" viewBox="0 0 800 450" aria-label="Laboratorio interactivo de un punto de fuga"><g class="layer"></g><g class="handles"></g></svg>
+    <div class="controls">
+      <div class="rng"><span>Profundidad</span><input id="k1" type="range" min="0.08" max="0.85" step="0.01" value="0.35"><b id="k1V"></b></div>
+      <label><input type="checkbox" id="aux1" checked> Líneas auxiliares</label>
+      <label><input type="checkbox" id="hid1" checked> Aristas ocultas</label>
+    </div>
+    <div class="readout" id="lab1Out"></div>
+  </figure>
+  <div class="card">
+    <b>Experimenta y anota la respuesta al respaldo de tu plancha:</b>
+    <ol class="try">
+      <li>Lleva el PF <b>por encima</b> de la caja y luego <b>por debajo</b>. ¿Qué cara nueva aparece en cada caso?</li>
+      <li>Lleva el PF a la <b>izquierda</b> de la caja. ¿Qué cara lateral ves? ¿Por qué no ves la otra?</li>
+      <li>Coloca el PF <b>dentro</b> de la cara frontal. ¿Qué tipo de espacio parece ahora (piensa en un pasillo)?</li>
+      <li>Aumenta la profundidad al máximo. ¿Puede la cara posterior llegar a coincidir con el PF? ¿Qué significaría?</li>
+    </ol>
+  </div>
+
+  <h3><span class="n">1.4</span>Construcción paso a paso</h3>
+  <p>Este es el procedimiento que repetirás con regla en la plancha. Avanza paso a paso y fíjate en el orden: primero las líneas auxiliares suaves, al final las aristas firmes.</p>
+  <figure class="stepper" id="st1">
+    <svg viewBox="0 0 800 420" aria-label="Construcción de una caja en un punto de fuga"><g class="layer"></g></svg>
+    <div class="stepnav">
+      <button class="btn" data-a="prev">◀ Anterior</button>
+      <button class="btn primary" data-a="next">Siguiente ▶</button>
+      <button class="btn" data-a="play">Ver todo</button>
+      <div class="dots"></div>
+    </div>
+    <div class="steptext"><h4></h4><p></p></div>
+  </figure>
+  <div class="note red"><b>Regla de oro de un punto.</b> Las aristas de la cara frontal y de la cara posterior quedan <b>horizontales o verticales</b>. Solo las aristas de profundidad (en rojo) van al PF.</div>
+
+  <h3><span class="n">1.5</span>Comprueba que entendiste</h3>
+  <div id="quiz1"></div>
+  <p class="score" id="quiz1s"></p>
+</section>
+
+<section id="plancha1">
+  <div class="plancha">
+    <div class="ph"><div class="kicker">Plancha 1 · Clase 1 · A4 horizontal</div><h4>Composición de prismas en un punto de fuga</h4></div>
+    <div class="pb">
+      <p>Vas a construir <b>tres prismas</b> que comparten <b>un solo PF</b>: uno por encima de la LH, uno atravesado por la LH y uno por debajo. Al final convertirás uno de ellos en un equipo eléctrico. El esquema muestra solo la distribución en la hoja; las medidas, la posición exacta del PF y la profundidad las decides tú.</p>
+      <figure style="margin:10px 0"><svg id="sheet1" viewBox="0 0 297 210" aria-label="Esquema de distribución de la plancha 1"></svg><figcaption>Esquema de distribución (no es la solución). Las zonas punteadas indican dónde va cada prisma.</figcaption></figure>
+      <div class="stages" data-key="p1">
+        <div class="stage"><div class="num">1</div><div><h5>Línea de horizonte y PF <span class="t">4 min</span></h5>
+          <ul><li>Traza la LH con trazo suave, a media altura del área de dibujo.</li><li>Ubica el PF sobre la LH. <b>No lo pongas en el centro exacto</b>: decide a qué lado lo desplazas.</li></ul>
+          <div class="ev">Evidencia: LH horizontal de lado a lado y PF marcado y rotulado.</div>
+          <label class="chk"><input type="checkbox"> Terminé esta etapa</label></div></div>
+        <div class="stage"><div class="num">2</div><div><h5>Tres caras frontales <span class="t">8 min</span></h5>
+          <ul><li>Prisma A: cara frontal completamente <b>por encima</b> de la LH.</li><li>Prisma B: cara frontal <b>atravesada</b> por la LH.</li><li>Prisma C: cara frontal completamente <b>por debajo</b> de la LH.</li><li>Cada rectángulo en una zona horizontal diferente y con tamaño propio (mínimo 3 cm por lado). Usa escuadras: lados horizontales y verticales.</li></ul>
+          <div class="ev">Evidencia: tres rectángulos con lados horizontales y verticales.</div>
+          <label class="chk"><input type="checkbox"> Terminé esta etapa</label></div></div>
+        <div class="stage"><div class="num">3</div><div><h5>Profundidad y caras posteriores <span class="t">12 min</span> <span class="min">Mínimo de la clase</span></h5>
+          <ul><li>Desde las cuatro esquinas de cada cara frontal, traza líneas auxiliares suaves hasta el PF.</li><li>Elige una profundidad diferente para cada prisma y cierra la cara posterior con líneas horizontales y verticales.</li><li>Repasa con trazo firme solo las aristas visibles. Las ocultas, punteadas o sin repasar.</li></ul>
+          <div class="ev">Evidencia: tres prismas cerrados; en cada uno se ve la cara que corresponde a su posición respecto a la LH y al PF.</div>
+          <label class="chk"><input type="checkbox"> Terminé esta etapa</label></div></div>
+        <div class="stage"><div class="num">4</div><div><h5>Conviértelo en un equipo eléctrico <span class="t">8 min</span></h5>
+          <ul><li>Elige uno de los tres prismas y transfórmalo en un tablero de breakers, una caja de paso o una fuente de poder.</li><li>Añade al menos un detalle rectangular (puerta, ventanilla, rejilla de ventilación o etiqueta) sobre una cara visible.</li><li>Si el detalle está en una cara lateral o superior, sus bordes de profundidad deben ir al mismo PF.</li></ul>
+          <div class="ev">Evidencia: detalle coherente con la cara sobre la que está dibujado.</div>
+          <label class="chk"><input type="checkbox"> Terminé esta etapa</label></div></div>
+      </div>
+      <div class="tablewrap"><table>
+        <tr><th>Error frecuente</th><th>Qué se ve</th><th>Cómo corregirlo</th></tr>
+        <tr><td>Una línea de profundidad no llega al PF.</td><td>La caja se ve torcida.</td><td>Apoya la regla en la esquina y en el PF; prolonga hasta verificar.</td></tr>
+        <tr><td>La cara posterior tiene un lado inclinado.</td><td>Se pierde la perspectiva de un punto.</td><td>Cierra la cara posterior con escuadra: horizontales y verticales.</td></tr>
+        <tr><td>Se repasan todas las líneas auxiliares.</td><td>El dibujo queda confuso.</td><td>Construye suave con HB y repasa con 2B solo las aristas visibles.</td></tr>
+      </table></div>
+      <h4>Verifica antes de entregar</h4>
+      <ul class="checklist" data-key="v1">
+        <li><label><input type="checkbox"> La LH es horizontal y el PF está sobre ella.</label></li>
+        <li><label><input type="checkbox"> Todas las aristas de profundidad, al prolongarse, pasan por el PF.</label></li>
+        <li><label><input type="checkbox"> Las caras frontales y posteriores tienen lados horizontales y verticales.</label></li>
+        <li><label><input type="checkbox"> Cada prisma muestra la cara superior o inferior que le corresponde según su posición respecto a la LH.</label></li>
+        <li><label><input type="checkbox"> Se distinguen las líneas auxiliares suaves de las aristas firmes.</label></li>
+      </ul>
+    </div>
+  </div>
+  <div class="closing"><b>Cierre · 5 min.</b> Responde al respaldo de la plancha: en tu dibujo, ¿qué cambiaría si el PF se desplazara hacia la izquierda? Puedes verificarlo en el laboratorio 1.3 antes de escribir.</div>
+</section>
+
+<!-- ======================= CLASE 2 ======================= -->
+<section id="clase2">
+  <div class="class-head">
+    <div class="kicker">Clase 2 · 55 minutos</div>
+    <h2>Perspectiva oblicua: dos puntos de fuga</h2>
+    <div class="timeline">
+      <div style="flex:12;background:#3b6ea5">Explorar<small>12 min</small></div>
+      <div style="flex:6;background:#5b7f4a">Construcción<small>6 min</small></div>
+      <div style="flex:5;background:#6b5b95">Errores<small>5</small></div>
+      <div style="flex:27;background:#9e2a33">Plancha 2<small>27 min</small></div>
+      <div style="flex:5;background:#c77700">Cierre<small>5</small></div>
+    </div>
+  </div>
+
+  <h3><span class="n">2.1</span>De un punto a dos: gira la caja</h3>
+  <p>En un punto de fuga la caja está <b>de frente</b>. Si la giras, empiezas a ver una <b>esquina</b> y aparece un segundo punto de fuga. Esta figura es un modelo 3D real: las convergencias se calculan, no se dibujan a ojo.</p>
+  <figure>
+    <svg id="rot" viewBox="0 0 800 400" aria-label="Caja que gira de un punto a dos puntos de fuga"><g class="layer"></g></svg>
+    <div class="controls">
+      <div class="rng"><span>Giro de la caja</span><input id="th" type="range" min="0" max="70" step="1" value="0"><b id="thV">0°</b></div>
+      <label><input type="checkbox" id="auxR" checked> Líneas auxiliares</label>
+    </div>
+    <div class="readout" id="rotOut"></div>
+  </figure>
+  <ol class="try">
+    <li>Con el giro en 0°, ¿cuántos puntos de fuga hay? ¿Cómo son las aristas azules?</li>
+    <li>Gira poco a poco. ¿De dónde "llega" el PF derecho? ¿Hacia dónde se desplaza el PF que antes estaba en el centro?</li>
+    <li>Observa las aristas verticales en cualquier giro: ¿se inclinan alguna vez?</li>
+  </ol>
+
+  <h3><span class="n">2.2</span>Tres familias de aristas</h3>
+  <div class="grid2" id="families"></div>
+
+  <h3><span class="n">2.3</span>Laboratorio: separa o acerca los puntos de fuga</h3>
+  <p>Arrastra <b class="c1">PF I</b>, <b class="c2">PF D</b>, los extremos de la arista cercana y los puntos que definen el ancho de cada cara. Observa el <b>ángulo de la esquina cercana</b>: es la forma técnica de saber si tu dibujo se ve natural.</p>
+  <figure>
+    <svg id="lab2" class="drag" viewBox="0 0 800 450" aria-label="Laboratorio interactivo de dos puntos de fuga"><g class="layer"></g><g class="handles"></g></svg>
+    <div class="controls">
+      <label><input type="checkbox" id="aux2" checked> Líneas auxiliares</label>
+      <label><input type="checkbox" id="hid2" checked> Aristas ocultas</label>
+      <button class="btn" id="lab2reset" type="button">Restablecer</button>
+    </div>
+    <div class="readout" id="lab2Out"></div>
+  </figure>
+  <div class="note ok"><b>Criterio técnico.</b> En la esquina cercana más alejada de la LH, el ángulo dibujado entre las dos aristas horizontales debe ser <b>mayor de 90°</b>. Si es menor, los puntos de fuga están demasiado cerca y el objeto se ve deformado. Por eso en la plancha los PF se ubican cerca de los bordes de la hoja.</div>
+
+  <h3><span class="n">2.4</span>Construcción paso a paso</h3>
+  <figure class="stepper" id="st2">
+    <svg viewBox="0 0 800 420" aria-label="Construcción de una caja en dos puntos de fuga"><g class="layer"></g></svg>
+    <div class="stepnav">
+      <button class="btn" data-a="prev">◀ Anterior</button>
+      <button class="btn primary" data-a="next">Siguiente ▶</button>
+      <button class="btn" data-a="play">Ver todo</button>
+      <div class="dots"></div>
+    </div>
+    <div class="steptext"><h4></h4><p></p></div>
+  </figure>
+
+  <h3><span class="n">2.5</span>¿Dónde está el error?</h3>
+  <p>Cada figura tiene <b>un</b> error típico. Elige la opción que lo describe; al acertar aparece la corrección en verde.</p>
+  <div class="errgrid" id="errs"></div>
+
+  <h3><span class="n">2.6</span>Comprueba que entendiste</h3>
+  <div id="quiz2"></div>
+  <p class="score" id="quiz2s"></p>
+</section>
+
+<section id="plancha2">
+  <div class="plancha">
+    <div class="ph"><div class="kicker">Plancha 2 · Clase 2 · A4 horizontal</div><h4>Equipo de taller en perspectiva oblicua</h4></div>
+    <div class="pb">
+      <p>Vas a construir un volumen en dos puntos de fuga y transformarlo en un equipo o mueble del taller de electrónica (banco de trabajo, gabinete, fuente de laboratorio, armario de herramientas). Todo lo que dibujes debe usar los <b>mismos dos PF</b>.</p>
+      <figure style="margin:10px 0"><svg id="sheet2" viewBox="0 0 297 210" aria-label="Esquema de distribución de la plancha 2"></svg><figcaption>Esquema de distribución (no es la solución).</figcaption></figure>
+      <div class="stages" data-key="p2">
+        <div class="stage"><div class="num">1</div><div><h5>LH y dos PF bien separados <span class="t">3 min</span></h5>
+          <ul><li>Traza la LH. Ubica PF I y PF D sobre ella, lo más cerca posible de los bordes laterales del área de dibujo.</li></ul>
+          <div class="ev">Evidencia: ambos PF sobre la misma LH y rotulados.</div>
+          <label class="chk"><input type="checkbox"> Terminé esta etapa</label></div></div>
+        <div class="stage"><div class="num">2</div><div><h5>Arista cercana y comprobación del ángulo <span class="t">4 min</span></h5>
+          <ul><li>Dibuja la arista vertical más cercana entre los dos PF (entre 6 y 9 cm). Decide si el objeto queda debajo de la LH (ves la cara superior) o atravesado por ella.</li><li>Traza las cuatro auxiliares: dos hacia PF I y dos hacia PF D.</li><li>Verifica con la escuadra que el ángulo de la esquina cercana es mayor de 90°.</li></ul>
+          <div class="ev">Evidencia: arista vertical y cuatro auxiliares; ángulo mayor de 90°.</div>
+          <label class="chk"><input type="checkbox"> Terminé esta etapa</label></div></div>
+        <div class="stage"><div class="num">3</div><div><h5>Cerrar el volumen <span class="t">8 min</span> <span class="min">Mínimo de la clase</span></h5>
+          <ul><li>Define el ancho de cada cara con una nueva arista vertical. Haz una cara más ancha que la otra.</li><li>Si ves la cara superior, ciérrala cruzando las familias: desde la esquina izquierda hacia PF D y desde la derecha hacia PF I.</li><li>Repasa las aristas visibles.</li></ul>
+          <div class="ev">Evidencia: volumen cerrado, verticales paralelas, cada arista horizontal en su familia.</div>
+          <label class="chk"><input type="checkbox"> Terminé esta etapa</label></div></div>
+        <div class="stage"><div class="num">4</div><div><h5>Conviértelo en un equipo del taller <span class="t">9 min</span></h5>
+          <ul><li>Agrega al menos <b>un detalle en cada cara visible</b>: puerta, cajón, panel de control, perillas, rejilla o display.</li><li>Los bordes horizontales de cada detalle van al mismo PF de la cara donde está; sus lados verticales quedan verticales.</li></ul>
+          <div class="ev">Evidencia: detalles en dos caras, cada uno con la familia correcta.</div>
+          <label class="chk"><input type="checkbox"> Terminé esta etapa</label></div></div>
+        <div class="stage"><div class="num">5</div><div><h5>Reto: segundo volumen <span class="t">3 min</span></h5>
+          <ul><li>Añade un volumen contiguo o encima (por ejemplo, una repisa o un instrumento sobre el banco) usando los mismos PF.</li></ul>
+          <div class="ev">Opcional. Suma en el componente procedimental.</div>
+          <label class="chk"><input type="checkbox"> Terminé esta etapa</label></div></div>
+      </div>
+      <h4>Verifica antes de entregar</h4>
+      <ul class="checklist" data-key="v2">
+        <li><label><input type="checkbox"> Los dos PF están sobre la misma LH.</label></li>
+        <li><label><input type="checkbox"> Las aristas de cada cara convergen solo al PF que les corresponde.</label></li>
+        <li><label><input type="checkbox"> Todas las aristas verticales son paralelas entre sí.</label></li>
+        <li><label><input type="checkbox"> El ángulo de la esquina cercana es mayor de 90°.</label></li>
+        <li><label><input type="checkbox"> Los detalles conservan la familia de fuga de la cara donde están.</label></li>
+      </ul>
+    </div>
+  </div>
+  <div class="closing"><b>Cierre · 5 min.</b> Responde al respaldo de la plancha 2: ¿qué diferencia geométrica hay entre una caja vista de frente y la misma caja vista desde una esquina? Usa las expresiones "cara frontal", "arista cercana" y "puntos de fuga".</div>
+</section>
+
+<section id="evaluacion">
+  <h3><span class="n">E</span>Evaluación de la guía</h3>
+  <p>Se evalúan las dos planchas por etapas y las respuestas escritas al respaldo. El docente puede ajustar la ponderación a la escala institucional.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Componente</th><th>Evidencia</th><th>Criterio observable</th></tr>
+    <tr><td><b>Cognitivo</b></td><td>Respuestas del laboratorio 1.3 y cierres de clase</td><td>Explica la función de la LH y de los PF, y relaciona la posición del PF con la cara que se ve del objeto.</td></tr>
+    <tr><td><b>Procedimental</b></td><td>Plancha 1 (etapas 1 a 4) y plancha 2 (etapas 1 a 5)</td><td>Construye prismas con convergencias correctas, verticales paralelas, familias de fuga sin mezclar y diferencia entre trazo auxiliar y arista final.</td></tr>
+    <tr><td><b>Actitudinal</b></td><td>Proceso en clase</td><td>Usa regla y escuadras, conserva las líneas auxiliares necesarias, verifica con la lista antes de entregar y alcanza al menos la etapa mínima de cada clase.</td></tr>
+  </table></div>
+</section>
+
+<footer>
+  <span>Instituto Técnico Veintiséis de Marzo · Barrancabermeja</span>
+  <span>Dibujo Técnico 11 ELEC · Periodo 4 · 2026 · Guía 1 de 2</span>
+</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+const NS="http://www.w3.org/2000/svg";
+const $=s=>document.querySelector(s);
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);if(attrs)for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function line(p,a,b,cls){return el("line",{x1:a[0],y1:a[1],x2:b[0],y2:b[1],class:cls},p);}
+function poly(p,pts,cls){return el("polygon",{points:pts.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" "),class:cls},p);}
+function txt(p,x,y,s,cls,anchor){const t=el("text",{x:x,y:y,class:cls||"lbl"},p);if(anchor)t.setAttribute("text-anchor",anchor);t.textContent=s;return t;}
+function lerp(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];}
+function atX(a,b,x){const t=(x-a[0])/(b[0]-a[0]);return [x,a[1]+t*(b[1]-a[1])];}
+function inter(p1,p2,p3,p4){const d=(p1[0]-p2[0])*(p3[1]-p4[1])-(p1[1]-p2[1])*(p3[0]-p4[0]);if(Math.abs(d)<1e-9)return null;const t=((p1[0]-p3[0])*(p3[1]-p4[1])-(p1[1]-p3[1])*(p3[0]-p4[0]))/d;return [p1[0]+t*(p2[0]-p1[0]),p1[1]+t*(p2[1]-p1[1])];}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function fmt(v,d){return v.toFixed(d===undefined?1:d).replace(".",",");}
+function store(){try{return window.localStorage;}catch(e){return null;}}
+
+/* ---------- arrastre ---------- */
+function svgPoint(svg,evt){const r=svg.getBoundingClientRect();const vb=svg.viewBox.baseVal;return [(evt.clientX-r.left)*vb.width/r.width+vb.x,(evt.clientY-r.top)*vb.height/r.height+vb.y];}
+function makeHandle(parent,color,kind){
+  const g=el("g",{class:"handle"},parent);
+  el("circle",{r:28,class:"hitc"},g);
+  if(kind==="pf"){el("circle",{r:12,class:"halo",stroke:color},g);el("circle",{r:11,fill:color,class:"ring"},g);}
+  else if(kind==="move"){el("circle",{r:12,fill:"#fff",stroke:color,"stroke-width":3},g);line(g,[-6,0],[6,0],"edge thin");line(g,[0,-6],[0,6],"edge thin");}
+  else {el("rect",{x:-9,y:-9,width:18,height:18,rx:3,fill:color,class:"ring"},g);}
+  return g;
+}
+function place(h,p){h.setAttribute("transform","translate("+p[0].toFixed(1)+","+p[1].toFixed(1)+")");}
+function drag(svg,h,onMove){
+  h.addEventListener("pointerdown",function(e){
+    e.preventDefault();h.setPointerCapture(e.pointerId);h.classList.add("grab");
+    const mv=function(ev){onMove(svgPoint(svg,ev));};
+    const up=function(){h.removeEventListener("pointermove",mv);h.removeEventListener("pointerup",up);h.removeEventListener("pointercancel",up);h.classList.remove("grab");};
+    h.addEventListener("pointermove",mv);h.addEventListener("pointerup",up);h.addEventListener("pointercancel",up);
+  });
+}
+
+/* ---------- 1.1 carretera ---------- */
+(function(){
+  const svg=$("#road"),L=svg.querySelector(".layer"),s=$("#eye");
+  const W=800,H=420,cx=400,cy=175,f=560;
+  function render(){
+    const E=+s.value;L.innerHTML="";
+    const P=(x,y,z)=>[cx+f*x/z,cy-f*(y-E)/z];
+    el("rect",{x:0,y:0,width:W,height:cy,class:"sky"},L);
+    el("rect",{x:0,y:cy,width:W,height:H-cy,class:"ground"},L);
+    const zn=2.5,zf=4000;
+    poly(L,[P(-3,0,zn),P(3,0,zn),P(3,0,zf),P(-3,0,zf)],"road");
+    for(let z=3;z<400;z+=5)poly(L,[P(-.09,0,z),P(.09,0,z),P(.09,0,z+2.2),P(-.09,0,z+2.2)],"dash");
+    line(L,P(-3,0,zn),[cx,cy],"edge1 thin");line(L,P(3,0,zn),[cx,cy],"edge1 thin");
+    const posts=[];for(let z=5;z<=150;z+=8)posts.push(z);
+    [-4.6,4.6].forEach(function(x){
+      line(L,P(x,3,4),[cx,cy],"aux1");
+      posts.slice().reverse().forEach(function(z){
+        const b=P(x,0,z),t=P(x,3,z);
+        el("line",{x1:b[0],y1:b[1],x2:t[0],y2:t[1],class:"post","stroke-width":Math.max(1.3,0.22*f/z)},L);
+        if(E<3&&z<90)el("circle",{cx:cx+f*x/z,cy:cy,r:clamp(0.14*f/z,2.2,6),class:"hit"},L);
+      });
+    });
+    line(L,[0,cy],[W,cy],"lh");txt(L,12,cy-10,"LH","lbl lhl");
+    el("circle",{cx:cx,cy:cy,r:7,class:"pfdot"},L);txt(L,cx+12,cy-12,"PF","lbl pf1");
+    /* vista lateral */
+    const bx=W-200,by=H-148,bw=186,bh=136;
+    el("rect",{x:bx,y:by,width:bw,height:bh,rx:8,fill:"#fff",stroke:"#cfc8b8"},L);
+    txt(L,bx+10,by+20,"Vista lateral","lbl xs");
+    const gy=by+bh-16,sc=11;
+    line(L,[bx+8,gy],[bx+bw-8,gy],"edge thin");
+    const px=bx+40,base=Math.max(0,E-1.6);
+    if(base>0)el("rect",{x:px-12,y:gy-base*sc,width:24,height:base*sc,fill:"#d9d2c2",stroke:"#8a8270"},L);
+    const ft=gy-base*sc;
+    line(L,[px,ft],[px,ft-1.1*sc],"edge thin");el("circle",{cx:px,cy:ft-1.35*sc,r:3.5,class:"inkdot"},L);
+    const ey=gy-E*sc;
+    el("circle",{cx:px+5,cy:ey,r:2.6,class:"pfdot"},L);
+    line(L,[px+5,ey],[bx+bw-8,ey],"lh");
+    const qx=bx+bw-36;line(L,[qx,gy],[qx,gy-3*sc],"post");
+    L.lastChild.setAttribute("stroke-width",4);
+    txt(L,qx-6,gy-3*sc-6,"3 m","lbl xs","end");
+    $("#eyeV").textContent=fmt(E)+" m";
+    $("#eyeOut").innerHTML=E<3
+      ?"Tus ojos están a <b>"+fmt(E)+" m</b>. La LH corta todos los postes (de 3 m) exactamente a "+fmt(E)+" m del suelo, estén cerca o lejos. Las líneas rojas son paralelas en la realidad y en el dibujo convergen al PF."
+      :"Tus ojos están a <b>"+fmt(E)+" m</b>, por encima de los postes (3 m). Ahora la LH pasa sobre todos ellos: los ves desde arriba y el piso ocupa más espacio en el dibujo.";
+  }
+  s.addEventListener("input",render);render();
+})();
+
+/* ---------- 1.2 elementos ---------- */
+(function(){
+  const data=[
+    {t:"Línea de horizonte (LH)",d:"Representa la altura de los ojos del observador. Es horizontal y atraviesa el PF.",draw:function(g){line(g,[10,60],[190,60],"lh");txt(g,14,50,"LH","lbl s lhl");}},
+    {t:"Punto de fuga (PF)",d:"Lugar de la LH hacia donde parecen juntarse las aristas que se alejan del observador.",draw:function(g){line(g,[10,60],[190,60],"lh");el("circle",{cx:100,cy:60,r:8,class:"pfdot"},g);txt(g,112,48,"PF","lbl s pf1");}},
+    {t:"Líneas de fuga",d:"Aristas de profundidad. Al prolongarlas, todas pasan por el PF.",draw:function(g){line(g,[10,60],[190,60],"lh");[[20,110],[60,112],[140,112],[180,110],[30,10],[170,12]].forEach(function(p){line(g,p,[100,60],"edge1 thin");});el("circle",{cx:100,cy:60,r:6,class:"pfdot"},g);}},
+    {t:"Líneas frontales",d:"Aristas paralelas a la hoja. Quedan horizontales o verticales y no van al PF.",draw:function(g){el("rect",{x:55,y:25,width:90,height:70,class:"edge",fill:"#e6ecf5"},g);}}
+  ];
+  const host=$("#elements");
+  data.forEach(function(it){
+    const c=document.createElement("div");c.className="card";c.style.margin="0";c.style.padding="12px";
+    const s=el("svg",{viewBox:"0 0 200 120"});s.style.width="100%";s.style.display="block";
+    it.draw(s);c.appendChild(s);
+    const h=document.createElement("h4");h.textContent=it.t;h.style.fontSize="1rem";h.style.margin="8px 0 4px";c.appendChild(h);
+    const p=document.createElement("p");p.textContent=it.d;p.style.fontSize=".9rem";p.style.margin="0";c.appendChild(p);
+    host.appendChild(c);
+  });
+})();
+
+/* ---------- 1.3 laboratorio un punto ---------- */
+(function(){
+  const svg=$("#lab1"),L=svg.querySelector(".layer"),H=svg.querySelector(".handles");
+  const W=800;
+  const st={pf:[580,150],x:150,y:225,w:220,h:135};
+  const k=$("#k1"),cA=$("#aux1"),cH=$("#hid1");
+  const hPF=makeHandle(H,"#c0392b","pf"),hMv=makeHandle(H,"#1d2533","move"),hSz=makeHandle(H,"#1d2533","size");
+  function render(){
+    L.innerHTML="";const pf=st.pf,x=st.x,y=st.y,w=st.w,h=st.h,kk=+k.value;
+    line(L,[0,pf[1]],[W,pf[1]],"lh");txt(L,10,pf[1]-10,"LH","lbl lhl");
+    const F=[[x,y],[x+w,y],[x+w,y+h],[x,y+h]],B=F.map(function(p){return lerp(p,pf,kk);});
+    if(cA.checked)F.forEach(function(p){line(L,p,pf,"aux1");});
+    const top=pf[1]<y,bot=pf[1]>y+h,left=pf[0]<x,right=pf[0]>x+w;
+    if(top)poly(L,[F[0],F[1],B[1],B[0]],"facet");if(bot)poly(L,[F[3],F[2],B[2],B[3]],"facet");
+    if(left)poly(L,[F[0],F[3],B[3],B[0]],"face1");if(right)poly(L,[F[1],F[2],B[2],B[1]],"face1");
+    poly(L,F,"facef");
+    const ed=[[B[0],B[1],top,"edge"],[B[1],B[2],right,"edge"],[B[2],B[3],bot,"edge"],[B[3],B[0],left,"edge"],
+      [F[0],B[0],top||left,"edge1"],[F[1],B[1],top||right,"edge1"],[F[2],B[2],bot||right,"edge1"],[F[3],B[3],bot||left,"edge1"]];
+    if(cH.checked)ed.forEach(function(e){if(!e[2])line(L,e[0],e[1],"hid");});
+    ed.forEach(function(e){if(e[2])line(L,e[0],e[1],e[3]);});
+    for(let i=0;i<4;i++)line(L,F[i],F[(i+1)%4],"edge");
+    txt(L,pf[0]+16,pf[1]-14,"PF","lbl pf1");
+    place(hPF,pf);place(hMv,[x+w/2,y+h/2]);place(hSz,[x+w,y+h]);
+    $("#k1V").textContent=Math.round((1-kk)*100)+" %";
+    const seen=["frontal"];if(top)seen.push("superior");if(bot)seen.push("inferior");if(left)seen.push("lateral izquierda");if(right)seen.push("lateral derecha");
+    let msg="Caras visibles: <b>"+seen.join(", ")+"</b>. La cara posterior mide el "+Math.round((1-kk)*100)+" % de la frontal.";
+    if(!top&&!bot&&!left&&!right)msg+=" El PF está dentro de la cara frontal: la caja se lee como un pasillo o un túnel visto de frente.";
+    else if(!top&&!bot)msg+=" La LH atraviesa la caja: no se ve ni la cara superior ni la inferior.";
+    $("#lab1Out").innerHTML=msg;
+  }
+  drag(svg,hPF,function(p){st.pf=[clamp(p[0],20,780),clamp(p[1],30,430)];render();});
+  drag(svg,hMv,function(p){st.x=clamp(p[0]-st.w/2,10,790-st.w);st.y=clamp(p[1]-st.h/2,10,440-st.h);render();});
+  drag(svg,hSz,function(p){st.w=clamp(p[0]-st.x,70,780-st.x);st.h=clamp(p[1]-st.y,60,440-st.y);render();});
+  [k,cA,cH].forEach(function(c){c.addEventListener("input",render);});
+  render();
+})();
+
+/* ---------- paso a paso (genérico) ---------- */
+function stepper(root,steps){
+  const svg=root.querySelector("svg"),L=svg.querySelector(".layer"),dots=root.querySelector(".dots");
+  const h4=root.querySelector(".steptext h4"),pp=root.querySelector(".steptext p");
+  const groups=steps.map(function(s){
+    const g=el("g",{class:"stg"},L);
+    s.items.forEach(function(it,i){
+      let e;const d=(i*0.18).toFixed(2)+"s";
+      if(it.k==="l"){const fade=/lh|hid/.test(it.c);e=el("path",{d:"M"+it.a[0]+" "+it.a[1]+" L"+it.b[0]+" "+it.b[1],class:it.c+(fade?" fade":" draw")},g);if(!fade)e.setAttribute("pathLength",1);}
+      else if(it.k==="p"){e=poly(g,it.pts,it.c+" fade");}
+      else if(it.k==="d"){e=el("g",{class:"fade"},g);el("circle",{cx:it.p[0],cy:it.p[1],r:it.r||8,class:it.c},e);if(it.t)txt(e,it.p[0]+(it.o?it.o[0]:12),it.p[1]+(it.o?it.o[1]:-12),it.t,it.lc||"lbl");}
+      else if(it.k==="t"){e=txt(g,it.p[0],it.p[1],it.s,(it.c||"lbl s")+" fade",it.a);}
+      if(e)e.style.setProperty("--d",d);
+    });
+    const dot=document.createElement("i");dots.appendChild(dot);
+    return g;
+  });
+  let cur=0,timer=null;
+  const bP=root.querySelector('[data-a="prev"]'),bN=root.querySelector('[data-a="next"]'),bA=root.querySelector('[data-a="play"]');
+  function show(n){
+    cur=n;
+    groups.forEach(function(g,i){g.setAttribute("class","stg"+(i<=n?" on":"")+(i===n?" cur":""));});
+    void svg.getBoundingClientRect();
+    svg.classList.toggle("dimmed",!!steps[n].dim);
+    dots.querySelectorAll("i").forEach(function(d,i){d.className=i<=n?"on":"";});
+    h4.textContent="Paso "+(n+1)+" de "+steps.length+" · "+steps[n].t;pp.innerHTML=steps[n].d;
+    bP.disabled=n===0;bN.disabled=n===steps.length-1;
+  }
+  function stop(){if(timer){clearInterval(timer);timer=null;bA.textContent="Ver todo";}}
+  bP.addEventListener("click",function(){stop();if(cur>0)show(cur-1);});
+  bN.addEventListener("click",function(){stop();if(cur<steps.length-1)show(cur+1);});
+  bA.addEventListener("click",function(){
+    if(timer){stop();return;}
+    show(0);bA.textContent="Pausa";
+    timer=setInterval(function(){if(cur<steps.length-1)show(cur+1);else stop();},2600);
+  });
+  show(0);
+}
+
+/* 1.4 pasos un punto */
+(function(){
+  const PF=[560,150],F=[[170,205],[390,205],[390,340],[170,340]],kk=.38,B=F.map(function(p){return lerp(p,PF,kk);});
+  stepper($("#st1"),[
+    {t:"Línea de horizonte y PF",d:"Traza la LH con trazo suave de lado a lado de la hoja. Marca el PF sobre ella. Aquí está a la derecha y por encima de la caja: por eso veremos la cara superior y la lateral derecha.",
+     items:[{k:"l",a:[0,150],b:[800,150],c:"lh"},{k:"t",p:[10,140],s:"LH",c:"lbl lhl"},{k:"d",p:PF,c:"pfdot",t:"PF",lc:"lbl pf1"}]},
+    {t:"Cara frontal",d:"Dibuja un rectángulo con escuadra. Sus lados son <b>horizontales y verticales</b> porque esta cara está de frente al observador.",
+     items:[{k:"l",a:F[0],b:F[1],c:"edge"},{k:"l",a:F[1],b:F[2],c:"edge"},{k:"l",a:F[2],b:F[3],c:"edge"},{k:"l",a:F[3],b:F[0],c:"edge"},{k:"t",p:[280,372],s:"cara frontal",a:"middle",c:"lbl s"}]},
+    {t:"Lleva cada esquina al PF",d:"Apoya la regla en cada esquina y en el PF. Traza cuatro líneas auxiliares <b>suaves</b>. Estas líneas contienen las aristas de profundidad.",
+     items:F.map(function(p){return {k:"l",a:p,b:PF,c:"aux1"};})},
+    {t:"Decide la profundidad",d:"Marca un punto sobre una auxiliar (aquí, la superior izquierda). Desde ese punto cierra la cara posterior con una horizontal y una vertical, hasta tocar las otras auxiliares.",
+     items:[{k:"d",p:B[0],c:"inkdot",r:6},{k:"l",a:B[0],b:B[1],c:"cons"},{k:"l",a:B[1],b:B[2],c:"cons"},{k:"l",a:B[2],b:B[3],c:"cons"},{k:"l",a:B[3],b:B[0],c:"cons"}]},
+    {t:"Repasa las aristas visibles",d:"Con trazo firme repasa solo lo que se ve: cara frontal, cara superior y cara derecha. Las aristas ocultas quedan punteadas o sin repasar. Conserva visibles algunas auxiliares como evidencia.",dim:true,
+     items:[{k:"p",pts:[F[0],F[1],B[1],B[0]],c:"facet"},{k:"p",pts:[F[1],F[2],B[2],B[1]],c:"face1"},
+       {k:"l",a:F[0],b:B[0],c:"edge1"},{k:"l",a:F[1],b:B[1],c:"edge1"},{k:"l",a:F[2],b:B[2],c:"edge1"},{k:"l",a:B[0],b:B[1],c:"edge"},{k:"l",a:B[1],b:B[2],c:"edge"},
+       {k:"l",a:F[3],b:B[3],c:"hid"},{k:"l",a:B[2],b:B[3],c:"hid"},{k:"l",a:B[3],b:B[0],c:"hid"}]}
+  ]);
+})();
+
+/* ---------- quiz genérico ---------- */
+function quiz(host,scoreEl,qs){
+  let ok=0,done=0;
+  qs.forEach(function(q,qi){
+    const box=document.createElement("div");box.className="q";
+    box.innerHTML='<div class="qt">'+(qi+1)+". "+q.q+'</div><div class="opts"></div><div class="fb"></div>';
+    const opts=box.querySelector(".opts");
+    q.o.forEach(function(o,i){
+      const b=document.createElement("button");b.type="button";b.className="opt";b.textContent=o;
+      b.addEventListener("click",function(){
+        if(box.classList.contains("done"))return;
+        box.classList.add("done");done++;
+        if(i===q.a){b.classList.add("right");ok++;box.querySelector(".fb").innerHTML="<b>Correcto.</b> "+q.e;}
+        else{b.classList.add("wrong");opts.children[q.a].classList.add("right");box.querySelector(".fb").innerHTML="<b>Revisa.</b> "+q.e;}
+        scoreEl.textContent="Resultado: "+ok+" de "+done+" respondidas ("+qs.length+" en total).";
+      });
+      opts.appendChild(b);
+    });
+    host.appendChild(box);
+  });
+}
+quiz($("#quiz1"),$("#quiz1s"),[
+  {q:"¿Qué representa la línea de horizonte?",o:["El borde del piso o de la mesa","La altura de los ojos del observador","La línea donde termina el dibujo"],a:1,e:"La LH está siempre a la altura de los ojos. En la carretera viste que corta los postes justo a esa altura."},
+  {q:"En perspectiva de un punto, las aristas verticales de la cara frontal…",o:["convergen al PF","se mantienen verticales","se inclinan hacia la LH"],a:1,e:"La cara frontal es paralela a la hoja: sus lados quedan horizontales y verticales."},
+  {q:"Si una caja está completamente por debajo de la LH, ¿qué cara adicional se ve?",o:["La superior","La inferior","Ninguna"],a:0,e:"El observador la mira desde arriba, así que ve la cara superior."},
+  {q:"El PF está a la izquierda de la caja. ¿Qué cara lateral se ve?",o:["La izquierda","La derecha","Las dos"],a:0,e:"Se ve la cara que mira hacia el PF, es decir, hacia el observador. Compruébalo en el laboratorio 1.3."},
+  {q:"¿Por qué la cara posterior se dibuja más pequeña?",o:["Porque en la realidad es más pequeña","Porque está más lejos del observador","Porque se dibuja encima del PF"],a:1,e:"Las dos caras miden lo mismo en la realidad; la posterior se ve menor por estar más lejos."}
+]);
+
+/* ---------- esquemas de plancha ---------- */
+function sheet(svg,draw){
+  el("rect",{x:0,y:0,width:297,height:210,fill:"#fffefb"},svg);
+  el("rect",{x:10,y:10,width:277,height:190,fill:"none",stroke:"#1d2533","stroke-width":1.2},svg);
+  el("rect",{x:187,y:170,width:100,height:30,fill:"#efe9dc",stroke:"#1d2533","stroke-width":.8},svg);
+  const t=el("text",{x:237,y:188,"text-anchor":"middle","font-size":7,fill:"#5b6474"},svg);t.textContent="Rótulo estándar";
+  draw(svg);
+}
+function zone(svg,x,y,w,h,label){el("rect",{x:x,y:y,width:w,height:h,fill:"rgba(31,95,168,.05)",stroke:"#1f5fa8","stroke-width":.8,"stroke-dasharray":"3 2",rx:2},svg);const t=el("text",{x:x+w/2,y:y+h/2+2.5,"text-anchor":"middle","font-size":7,"font-weight":600,fill:"#1f5fa8"},svg);t.textContent=label;}
+sheet($("#sheet1"),function(s){
+  el("line",{x1:10,y1:95,x2:287,y2:95,stroke:"#7a8494","stroke-width":.8,"stroke-dasharray":"4 3"},s);
+  let t=el("text",{x:14,y:91,"font-size":7,fill:"#7a8494","font-weight":600},s);t.textContent="LH";
+  zone(s,22,28,70,48,"A · sobre la LH");zone(s,108,70,78,52,"B · cruza la LH");zone(s,200,112,72,48,"C · bajo la LH");
+  t=el("text",{x:148,y:22,"text-anchor":"middle","font-size":6.5,fill:"#c0392b","font-weight":600},s);t.textContent="El PF va sobre la LH; tú decides dónde";
+});
+sheet($("#sheet2"),function(s){
+  el("line",{x1:10,y1:82,x2:287,y2:82,stroke:"#7a8494","stroke-width":.8,"stroke-dasharray":"4 3"},s);
+  el("circle",{cx:16,cy:82,r:2.6,fill:"#c0392b"},s);el("circle",{cx:281,cy:82,r:2.6,fill:"#1f5fa8"},s);
+  let t=el("text",{x:20,y:76,"font-size":7,fill:"#c0392b","font-weight":700},s);t.textContent="PF I";
+  t=el("text",{x:277,y:76,"font-size":7,fill:"#1f5fa8","font-weight":700,"text-anchor":"end"},s);t.textContent="PF D";
+  zone(s,92,92,110,72,"Volumen principal");
+  el("line",{x1:140,y1:96,x2:140,y2:160,stroke:"#1d2533","stroke-width":1.4},s);
+  t=el("text",{x:143,y:104,"font-size":6,fill:"#1d2533"},s);t.textContent="arista cercana";
+  zone(s,100,40,70,30,"Reto: 2.º volumen");
+});
+
+/* ---------- 2.1 giro 3D ---------- */
+(function(){
+  const svg=$("#rot"),L=svg.querySelector(".layer"),sl=$("#th"),ca=$("#auxR");
+  const W=800,cx=400,cy=150,f=470,E=2.6,D=8,C=[-1.9,0,0],w=2.6,d=1.8,h=1.5;
+  function proj(p){const Z=p[2]+D;return [cx+f*p[0]/Z,cy-f*(p[1]-E)/Z];}
+  function render(){
+    const deg=+sl.value,th=deg*Math.PI/180;L.innerHTML="";
+    const u=[Math.cos(th),0,Math.sin(th)],v=[-Math.sin(th),0,Math.cos(th)];
+    const P3=[];for(let i=0;i<8;i++){const su=(i&1)?1:-1,sv=(i&2)?1:-1,yy=(i&4)?h:0;P3.push([C[0]+su*w/2*u[0]+sv*d/2*v[0],yy,C[2]+su*w/2*u[2]+sv*d/2*v[2]]);}
+    const P2=P3.map(proj);
+    line(L,[0,cy],[W,cy],"lh");txt(L,10,cy-10,"LH","lbl lhl");
+    const vpV=[cx-f*Math.tan(th),cy],vpU=deg>0?[cx+f/Math.tan(th),cy]:null;
+    const edges=[];for(let i=0;i<8;i++)for(let b=0;b<3;b++){const j=i|(1<<b);if(j!==i)edges.push([i,j,b]);}
+    const cam=[0,E,-D];
+    const faces=[];
+    [[0,1,u],[0,-1,u],[1,1,v],[1,-1,v],[2,1,[0,1,0]],[2,-1,[0,1,0]]].forEach(function(fc){
+      const b=fc[0],sgn=fc[1],n=fc[2].map(function(c){return c*sgn;});
+      const ids=[];for(let i=0;i<8;i++)if(((i>>b)&1)===(sgn>0?1:0))ids.push(i);
+      const o=[ids[0],ids[1],ids[3],ids[2]];
+      const c=[0,0,0];o.forEach(function(i){for(let a=0;a<3;a++)c[a]+=P3[i][a]/4;});
+      const vis=n[0]*(cam[0]-c[0])+n[1]*(cam[1]-c[1])+n[2]*(cam[2]-c[2])>0;
+      faces.push({b:b,o:o,vis:vis,ids:ids});
+    });
+    function famCls(b){return b===2?"edge":(b===1?"edge1":(deg>0?"edge2":"edge"));}
+    if(ca.checked){
+      edges.forEach(function(e){
+        if(e[2]===1){const a=P2[e[0]],c=P2[e[1]];const far=Math.hypot(a[0]-vpV[0],a[1]-vpV[1])>Math.hypot(c[0]-vpV[0],c[1]-vpV[1])?a:c;line(L,far,vpV,"aux1");}
+        if(e[2]===0&&vpU){const a=P2[e[0]],c=P2[e[1]];const far=Math.hypot(a[0]-vpU[0],a[1]-vpU[1])>Math.hypot(c[0]-vpU[0],c[1]-vpU[1])?a:c;line(L,far,vpU,"aux2");}
+      });
+    }
+    faces.forEach(function(fc){if(fc.vis)poly(L,fc.o.map(function(i){return P2[i];}),fc.b===2?"facet":(fc.b===0?"face1":"face2"));});
+    function edgeVis(e){return faces.some(function(fc){return fc.vis&&fc.ids.indexOf(e[0])>=0&&fc.ids.indexOf(e[1])>=0;});}
+    edges.forEach(function(e){if(!edgeVis(e))line(L,P2[e[0]],P2[e[1]],"hid");});
+    edges.forEach(function(e){if(edgeVis(e))line(L,P2[e[0]],P2[e[1]],famCls(e[2]));});
+    function vp(p,cls,lc,name,side){
+      if(p[0]>=8&&p[0]<=792){el("circle",{cx:p[0],cy:p[1],r:8,class:cls},L);txt(L,p[0],p[1]+32,name,lc,"middle");}
+      else{const x=side<0?14:786;el("path",{d:side<0?"M"+(x+16)+" "+(cy-10)+" L"+x+" "+cy+" L"+(x+16)+" "+(cy+10)+"Z":"M"+(x-16)+" "+(cy-10)+" L"+x+" "+cy+" L"+(x-16)+" "+(cy+10)+"Z",class:cls},L);txt(L,side<0?x+20:x-20,cy+30,name+" (fuera de la hoja)",lc+" s",side<0?"start":"end");}
+    }
+    vp(vpV,"pfdot","lbl pf1",deg>0?"PF I":"PF",-1);
+    if(vpU)vp(vpU,"pfdot2","lbl pf2","PF D",1);
+    $("#thV").textContent=deg+"°";
+    let m;
+    if(deg===0)m="<b>Vista frontal: un punto de fuga.</b> Las aristas de profundidad (rojas) van al único PF. Las aristas de ancho son paralelas a la hoja: quedan horizontales y no tienen punto de fuga.";
+    else if(vpU&&vpU[0]>792)m="<b>Empieza el giro.</b> El PF rojo se desplaza a la izquierda y las aristas de ancho (azules) ya se inclinan: convergen a un PF D que todavía está muy lejos, fuera de la hoja.";
+    else m="<b>Vista de esquina: dos puntos de fuga.</b> Cada familia horizontal tiene su propio PF sobre la misma LH. Las verticales siguen verticales.";
+    $("#rotOut").innerHTML=m;
+  }
+  sl.addEventListener("input",render);ca.addEventListener("input",render);render();
+})();
+
+/* ---------- 2.2 familias ---------- */
+(function(){
+  const host=$("#families");
+  const items=[
+    {t:"Horizontales hacia la izquierda",d:"Convergen al PF izquierdo (PF I).",c:"edge1",draw:function(g){line(g,[10,50],[190,50],"lh");el("circle",{cx:14,cy:50,r:6,class:"pfdot"},g);[[150,70],[150,100],[175,80]].forEach(function(p){line(g,p,[14,50],"aux1");});line(g,[150,70],[95,62],"edge1");line(g,[150,100],[95,79],"edge1");}},
+    {t:"Horizontales hacia la derecha",d:"Convergen al PF derecho (PF D).",draw:function(g){line(g,[10,50],[190,50],"lh");el("circle",{cx:186,cy:50,r:6,class:"pfdot2"},g);[[50,70],[50,100]].forEach(function(p){line(g,p,[186,50],"aux2");});line(g,[50,70],[110,62],"edge2");line(g,[50,100],[110,79],"edge2");}},
+    {t:"Verticales",d:"Siguen verticales y paralelas entre sí. No tienen punto de fuga (mientras no inclines la mirada).",draw:function(g){[60,100,140].forEach(function(x,i){line(g,[x,20+i*6],[x,100-i*4],"edge");});}},
+    {t:"¿Por qué empezar por una arista?",d:"En dos puntos ninguna cara queda de frente: lo único que conserva su forma real es la arista vertical más cercana. Desde ella se construye todo.",draw:function(g){line(g,[10,40],[190,40],"lh");line(g,[100,55],[100,105],"edge");line(g,[100,55],[14,40],"aux1");line(g,[100,105],[14,40],"aux1");line(g,[100,55],[186,40],"aux2");line(g,[100,105],[186,40],"aux2");}}
+  ];
+  items.forEach(function(it){
+    const c=document.createElement("div");c.className="card";c.style.margin="0";c.style.display="grid";c.style.gridTemplateColumns="140px 1fr";c.style.gap="12px";c.style.alignItems="center";
+    const s=el("svg",{viewBox:"0 0 200 120"});s.style.width="100%";it.draw(s);c.appendChild(s);
+    const dv=document.createElement("div");dv.innerHTML="<h4 style='font-size:1rem;margin-bottom:4px'>"+it.t+"</h4><p style='margin:0;font-size:.92rem'>"+it.d+"</p>";c.appendChild(dv);host.appendChild(c);
+  });
+})();
+
+/* ---------- 2.3 laboratorio dos puntos ---------- */
+(function(){
+  const svg=$("#lab2"),L=svg.querySelector(".layer"),H=svg.querySelector(".handles");
+  const W=800,init=function(){return {pl:[60,160],pr:[740,160],nx:400,yT:235,yB:370,xl:270,xr:545};};
+  let st=init();
+  const ca=$("#aux2"),ch=$("#hid2");
+  const hL=makeHandle(H,"#c0392b","pf"),hR=makeHandle(H,"#1f5fa8","pf"),hT=makeHandle(H,"#1d2533","move"),hB=makeHandle(H,"#1d2533","size"),hWL=makeHandle(H,"#c0392b","size"),hWR=makeHandle(H,"#1f5fa8","size");
+  function render(){
+    L.innerHTML="";
+    const hy=st.pl[1],pl=st.pl,pr=st.pr;
+    st.nx=clamp(st.nx,pl[0]+50,pr[0]-50);
+    st.xl=clamp(st.xl,pl[0]+20,st.nx-25);st.xr=clamp(st.xr,st.nx+25,pr[0]-20);
+    const nT=[st.nx,st.yT],nB=[st.nx,st.yB];
+    const TL=atX(nT,pl,st.xl),BL=atX(nB,pl,st.xl),TR=atX(nT,pr,st.xr),BR=atX(nB,pr,st.xr);
+    const KT=inter(TL,pr,TR,pl),KB=inter(BL,pr,BR,pl);
+    const top=hy<st.yT,bot=hy>st.yB;
+    line(L,[0,hy],[W,hy],"lh");txt(L,W/2,hy-12,"LH","lbl lhl","middle");
+    if(ca.checked){
+      [nT,nB].forEach(function(p){line(L,p,pl,"aux1");line(L,p,pr,"aux2");});
+      if(top){line(L,TL,pr,"aux2");line(L,TR,pl,"aux1");}
+      if(bot){line(L,BL,pr,"aux2");line(L,BR,pl,"aux1");}
+    }
+    if(top&&KT)poly(L,[nT,TL,KT,TR],"facet");
+    if(bot&&KB)poly(L,[nB,BL,KB,BR],"facet");
+    poly(L,[nT,TL,BL,nB],"face1");poly(L,[nT,TR,BR,nB],"face2");
+    if(ch.checked){
+      if(KT&&KB)line(L,KT,KB,"hid");
+      if(!top&&KT){line(L,TL,KT,"hid");line(L,TR,KT,"hid");}
+      if(!bot&&KB){line(L,BL,KB,"hid");line(L,BR,KB,"hid");}
+    }
+    if(top&&KT){line(L,TL,KT,"edge2");line(L,TR,KT,"edge1");}
+    if(bot&&KB){line(L,BL,KB,"edge2");line(L,BR,KB,"edge1");}
+    line(L,nT,TL,"edge1");line(L,nB,BL,"edge1");line(L,nT,TR,"edge2");line(L,nB,BR,"edge2");
+    line(L,TL,BL,"edge");line(L,TR,BR,"edge");line(L,nT,nB,"edge");
+    /* ángulo */
+    const corner=Math.abs(st.yB-hy)>=Math.abs(st.yT-hy)?nB:nT;
+    const a1=Math.atan2(pl[1]-corner[1],pl[0]-corner[0]),a2=Math.atan2(pr[1]-corner[1],pr[0]-corner[0]);
+    let da=a2-a1;while(da>Math.PI)da-=2*Math.PI;while(da<-Math.PI)da+=2*Math.PI;
+    const ang=Math.abs(da)*180/Math.PI,good=ang>90;
+    const pts=[];for(let i=0;i<=16;i++){const a=a1+da*i/16;pts.push((corner[0]+38*Math.cos(a)).toFixed(1)+","+(corner[1]+38*Math.sin(a)).toFixed(1));}
+    el("polyline",{points:pts.join(" "),class:"arc",stroke:good?"#2e7d4f":"#c77700"},L);
+    const mid=a1+da/2,ly=corner[1]+62*Math.sin(mid);
+    txt(L,corner[0]+14,ly+(Math.sin(mid)>0?14:0),Math.round(ang)+"°",good?"lbl okc":"lbl warnc","start");
+    txt(L,pl[0],hy+46,"PF I","lbl pf1","middle");txt(L,pr[0],hy+46,"PF D","lbl pf2","middle");
+    place(hL,pl);place(hR,pr);place(hT,nT);place(hB,nB);place(hWL,BL);place(hWR,BR);
+    const sep=Math.round(pr[0]-pl[0]);
+    $("#lab2Out").innerHTML="Ángulo de la esquina cercana: <b style='color:"+(good?"var(--ok)":"var(--warn)")+"'>"+Math.round(ang)+"°</b>. "+(good?"Mayor de 90°: el objeto se ve natural.":"Menor de 90°: el objeto se ve deformado. Separa los PF o acerca la arista a la LH.")+" "+(top?"La LH está por encima: se ve la cara superior.":bot?"La LH está por debajo: se ve la cara inferior.":"La LH atraviesa el objeto: no se ve la cara superior ni la inferior.")+" Separación entre PF: "+sep+" unidades.";
+  }
+  drag(svg,hL,function(p){st.pl=[clamp(p[0],10,st.nx-60),clamp(p[1],30,430)];st.pr[1]=st.pl[1];render();});
+  drag(svg,hR,function(p){st.pr=[clamp(p[0],st.nx+60,790),clamp(p[1],30,430)];st.pl[1]=st.pr[1];render();});
+  drag(svg,hT,function(p){st.nx=p[0];st.yT=clamp(p[1],15,st.yB-50);render();});
+  drag(svg,hB,function(p){st.yB=clamp(p[1],st.yT+50,440);render();});
+  drag(svg,hWL,function(p){st.xl=p[0];render();});
+  drag(svg,hWR,function(p){st.xr=p[0];render();});
+  [ca,ch].forEach(function(c){c.addEventListener("input",render);});
+  $("#lab2reset").addEventListener("click",function(){st=init();render();});
+  render();
+})();
+
+/* 2.4 pasos dos puntos */
+(function(){
+  const PL=[40,165],PR=[760,165],nT=[380,215],nB=[380,350],xl=245,xr=565;
+  const TL=atX(nT,PL,xl),BL=atX(nB,PL,xl),TR=atX(nT,PR,xr),BR=atX(nB,PR,xr),K=inter(TL,PR,TR,PL),KB=inter(BL,PR,BR,PL);
+  stepper($("#st2"),[
+    {t:"LH y dos puntos de fuga",d:"Traza la LH y ubica PF I y PF D sobre ella, <b>lo más separados posible</b>: en la plancha, cerca de los bordes del área de dibujo.",
+     items:[{k:"l",a:[0,165],b:[800,165],c:"lh"},{k:"d",p:PL,c:"pfdot",t:"PF I",o:[4,-16],lc:"lbl pf1"},{k:"d",p:PR,c:"pfdot2",t:"PF D",o:[-62,-16],lc:"lbl pf2"}]},
+    {t:"Arista cercana",d:"Dibuja una arista vertical entre los dos PF. Es la esquina del objeto más cercana a ti y la única línea que conserva su altura real. Aquí está debajo de la LH: veremos la cara superior.",
+     items:[{k:"l",a:nT,b:nB,c:"edge"},{k:"t",p:[380,385],s:"arista cercana",a:"middle",c:"lbl s"}]},
+    {t:"Cuatro líneas auxiliares",d:"Desde el extremo superior y el inferior de la arista, traza una auxiliar hacia PF I (rojas) y otra hacia PF D (azules).",
+     items:[{k:"l",a:nT,b:PL,c:"aux1"},{k:"l",a:nB,b:PL,c:"aux1"},{k:"l",a:nT,b:PR,c:"aux2"},{k:"l",a:nB,b:PR,c:"aux2"}]},
+    {t:"Ancho de cada cara",d:"Decide el ancho visible de cada cara y levanta una vertical en cada lado, entre las auxiliares. Una cara más ancha que la otra muestra mejor el giro del objeto.",
+     items:[{k:"l",a:TL,b:BL,c:"edge"},{k:"l",a:TR,b:BR,c:"edge"}]},
+    {t:"Cara superior: se cruzan las familias",d:"Desde la esquina superior izquierda traza hacia <b class='c2'>PF D</b>; desde la superior derecha, hacia <b class='c1'>PF I</b>. Donde se cortan está la esquina trasera.",
+     items:[{k:"l",a:TL,b:PR,c:"aux2"},{k:"l",a:TR,b:PL,c:"aux1"},{k:"d",p:K,c:"inkdot",r:6}]},
+    {t:"Repasa las aristas visibles",d:"Repasa con trazo firme. Cada arista horizontal pertenece a una familia: roja si va a PF I, azul si va a PF D. Las verticales quedan negras y paralelas.",dim:true,
+     items:[{k:"p",pts:[nT,TL,K,TR],c:"facet"},{k:"p",pts:[nT,TL,BL,nB],c:"face1"},{k:"p",pts:[nT,TR,BR,nB],c:"face2"},
+       {k:"l",a:nT,b:TL,c:"edge1"},{k:"l",a:nB,b:BL,c:"edge1"},{k:"l",a:nT,b:TR,c:"edge2"},{k:"l",a:nB,b:BR,c:"edge2"},{k:"l",a:TL,b:K,c:"edge2"},{k:"l",a:TR,b:K,c:"edge1"},
+       {k:"l",a:BL,b:KB,c:"hid"},{k:"l",a:BR,b:KB,c:"hid"},{k:"l",a:K,b:KB,c:"hid"}]}
+  ]);
+})();
+
+/* 2.5 dónde está el error */
+(function(){
+  const host=$("#errs");
+  function base(s,cfg){
+    const pl=cfg.pl,pr=cfg.pr,hy=pl[1],nT=[cfg.nx,cfg.yT],nB=[cfg.nx,cfg.yB];
+    const TL=atX(nT,pl,cfg.xl),BL=atX(nB,pl,cfg.xl),TR=atX(nT,pr,cfg.xr),BR=atX(nB,pr,cfg.xr),K=inter(TL,pr,TR,pl);
+    line(s,[0,hy],[320,hy],"lh");el("circle",{cx:pl[0],cy:hy,r:6,class:"pfdot"},s);el("circle",{cx:pr[0],cy:hy,r:6,class:"pfdot2"},s);
+    txt(s,pl[0],hy-12,"PF I","lbl xs pf1",pl[0]<40?"start":"middle");txt(s,pr[0],hy-12,"PF D","lbl xs pf2",pr[0]>280?"end":"middle");
+    return {nT:nT,nB:nB,TL:TL,BL:BL,TR:TR,BR:BR,K:K,pl:pl,pr:pr};
+  }
+  const cases=[
+    {cfg:{pl:[12,70],pr:[308,70],nx:160,yT:105,yB:185,xl:95,xr:225},
+     draw:function(s,g,fx){const B=g.BR;const bad=atX(g.nB,g.pl,225);
+       poly(s,[g.nT,g.TL,g.K,g.TR],"facet");line(s,g.nT,g.TL,"edge1");line(s,g.nB,g.BL,"edge1");line(s,g.nT,g.TR,"edge2");line(s,g.TL,g.K,"edge2");line(s,g.TR,g.K,"edge1");
+       line(s,g.TL,g.BL,"edge");line(s,g.nT,g.nB,"edge");line(s,g.TR,bad,"edge");line(s,g.nB,bad,"edge2");
+       line(fx,g.nB,B,"fix");line(fx,B,g.pr,"fixd");line(fx,g.TR,B,"fix");},
+     o:["Una arista vertical está inclinada","La arista inferior derecha se dirige al PF equivocado","Los dos PF no están sobre la misma LH"],a:1,
+     e:"La arista inferior de la cara derecha prolonga la familia del PF I. Debe dirigirse al PF D, como la arista superior de esa misma cara."},
+    {cfg:{pl:[12,70],pr:[308,70],nx:160,yT:105,yB:185,xl:95,xr:225},
+     draw:function(s,g,fx){const bad=[g.BR[0]+22,g.BR[1]+3];
+       poly(s,[g.nT,g.TL,g.K,g.TR],"facet");line(s,g.nT,g.TL,"edge1");line(s,g.nB,g.BL,"edge1");line(s,g.nT,g.TR,"edge2");line(s,g.TL,g.K,"edge2");line(s,g.TR,g.K,"edge1");
+       line(s,g.TL,g.BL,"edge");line(s,g.nT,g.nB,"edge");line(s,g.TR,bad,"edge");line(s,g.nB,bad,"edge2");
+       line(fx,g.TR,g.BR,"fix");line(fx,g.nB,g.BR,"fix");},
+     o:["La arista vertical derecha está inclinada","La cara superior está mal cerrada","El ángulo de la esquina es menor de 90°"],a:0,
+     e:"En dos puntos todas las verticales son paralelas. Inclinar una equivale a introducir sin querer un tercer punto de fuga."},
+    {cfg:{pl:[105,70],pr:[215,70],nx:160,yT:96,yB:205,xl:136,xr:186},
+     draw:function(s,g,fx){
+       poly(s,[g.nT,g.TL,g.K,g.TR],"facet");line(s,g.nT,g.TL,"edge1");line(s,g.nB,g.BL,"edge1");line(s,g.nT,g.TR,"edge2");line(s,g.nB,g.BR,"edge2");line(s,g.TL,g.K,"edge2");line(s,g.TR,g.K,"edge1");
+       line(s,g.TL,g.BL,"edge");line(s,g.TR,g.BR,"edge");line(s,g.nT,g.nB,"edge");
+       line(s,g.nB,g.pl,"aux1");line(s,g.nB,g.pr,"aux2");
+       const a1=Math.atan2(g.pl[1]-g.nB[1],g.pl[0]-g.nB[0]),a2=Math.atan2(g.pr[1]-g.nB[1],g.pr[0]-g.nB[0]);const ang=Math.round((a2-a1)*180/Math.PI);
+       const pts=[];for(let i=0;i<=12;i++){const a=a1+(a2-a1)*i/12;pts.push((g.nB[0]+26*Math.cos(a)).toFixed(1)+","+(g.nB[1]+26*Math.sin(a)).toFixed(1));}
+       el("polyline",{points:pts.join(" "),class:"arc",stroke:"#c77700"},fx);txt(fx,g.nB[0]+30,g.nB[1]-34,ang+"° (menor de 90°)","lbl xs warnc");
+       txt(fx,160,248,"Solución: separar los PF","lbl xs okc","middle");},
+     o:["Una arista va al PF equivocado","Falta la cara inferior","Los PF están demasiado cerca: la esquina mide menos de 90°"],a:2,
+     e:"Con los PF tan juntos, el ángulo de la esquina cercana queda muy por debajo de 90° y el objeto parece estirado. Ubica los PF cerca de los bordes de la hoja."}
+  ];
+  cases.forEach(function(cs,ci){
+    const card=document.createElement("div");card.className="errcard";
+    const s=el("svg",{viewBox:"0 0 320 260"});s.style.background="#fffefb";
+    const g=base(s,cs.cfg);const fx=el("g",{class:"fixlayer"});
+    cs.draw(s,g,fx);s.appendChild(fx);
+    txt(s,10,250,"Figura "+String.fromCharCode(65+ci),"lbl xs");
+    card.appendChild(s);
+    const b=document.createElement("div");b.className="body q";b.style.border="0";b.style.margin="0";
+    b.innerHTML='<div class="qt">¿Cuál es el error?</div><div class="opts"></div><div class="fb"></div>';
+    const opts=b.querySelector(".opts");
+    cs.o.forEach(function(o,i){const bt=document.createElement("button");bt.type="button";bt.className="opt";bt.textContent=o;
+      bt.addEventListener("click",function(){
+        if(i===cs.a){bt.classList.add("right");b.classList.add("done");card.classList.add("solved");b.querySelector(".fb").innerHTML="<b>Correcto.</b> "+cs.e;}
+        else{bt.classList.add("wrong");bt.disabled=true;}
+      });opts.appendChild(bt);});
+    card.appendChild(b);host.appendChild(card);
+  });
+})();
+
+quiz($("#quiz2"),$("#quiz2s"),[
+  {q:"En perspectiva de dos puntos, ¿cuántas familias de aristas convergen a un punto de fuga?",o:["Una","Dos","Tres"],a:1,e:"Las dos familias horizontales convergen, cada una a su PF. Las verticales se mantienen paralelas."},
+  {q:"Cuando la caja empieza a girar desde la vista frontal, el PF derecho…",o:["aparece en el centro de la hoja","llega desde muy lejos y se acerca a medida que aumenta el giro","no existe hasta que el giro llega a 45°"],a:1,e:"Con giros pequeños las aristas de ancho casi son horizontales, así que su PF está muy lejos. Lo viste en la figura 2.1."},
+  {q:"Una arista de la cara izquierda del objeto debe dirigirse…",o:["al PF I","al PF D","a cualquiera de los dos"],a:0,e:"Cada cara tiene sus aristas horizontales en una sola familia. Mezclar familias produce un sólido torcido."},
+  {q:"Si acercas mucho los dos PF al objeto, el dibujo…",o:["se ve más natural","se ve más deformado","no cambia"],a:1,e:"El ángulo de la esquina cercana baja de 90° y el objeto se ve estirado."}
+]);
+
+/* ---------- persistencia de casillas ---------- */
+(function(){
+  const ls=store();
+  document.querySelectorAll("[data-key]").forEach(function(group){
+    const key="dt11-g1-"+group.getAttribute("data-key");
+    const boxes=group.querySelectorAll("input[type=checkbox]");
+    let saved=[];try{saved=JSON.parse((ls&&ls.getItem(key))||"[]");}catch(e){saved=[];}
+    boxes.forEach(function(b,i){
+      b.checked=!!saved[i];
+      const stg=b.closest(".stage");if(stg)stg.classList.toggle("done",b.checked);
+      b.addEventListener("change",function(){
+        if(stg)stg.classList.toggle("done",b.checked);
+        const arr=Array.prototype.map.call(boxes,function(x){return x.checked;});
+        try{if(ls)ls.setItem(key,JSON.stringify(arr));}catch(e){}
+      });
+    });
+  });
+})();
+})();
+</script>
+</body>
+</html>

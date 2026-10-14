@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guías interactivas · Periodo 4</title>
+<meta name="description" content="Portada de las guías interactivas del Periodo 4 de 2026 del Instituto Técnico Veintiséis de Marzo. Elige tu grado y abre la guía de tu materia.">
+<link rel="icon" href="assets/escudo.png">
+<style>
+:root{
+  --bg:#f7f5f1; --surface:#ffffff; --ink:#1f2430; --muted:#5b6270; --line:#e2ded6;
+  --brand:#a8353a; --brand-ink:#ffffff; --accent:#3b6db5; --accent-soft:#e6eefa;
+  --tag-guia:#e6eefa; --tag-guia-ink:#274a80; --tag-conc:#fbeacb; --tag-conc-ink:#7a4d00;
+  --shadow:0 1px 2px rgba(20,25,40,.06),0 4px 14px rgba(20,25,40,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#15171c; --surface:#1e2128; --ink:#eceef2; --muted:#a3a9b6; --line:#2e323c;
+    --brand:#d9575c; --brand-ink:#1a0c0d; --accent:#8db3ee; --accent-soft:#232b3a;
+    --tag-guia:#232b3a; --tag-guia-ink:#a9c6f4; --tag-conc:#3a2e14; --tag-conc-ink:#f0c978;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15171c; --surface:#1e2128; --ink:#eceef2; --muted:#a3a9b6; --line:#2e323c;
+  --brand:#d9575c; --brand-ink:#1a0c0d; --accent:#8db3ee; --accent-soft:#232b3a;
+  --tag-guia:#232b3a; --tag-guia-ink:#a9c6f4; --tag-conc:#3a2e14; --tag-conc-ink:#f0c978;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+header.top{background:var(--surface);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;gap:20px;align-items:center;padding-top:28px;padding-bottom:28px}
+.top img{width:88px;height:auto;flex:none}
+.top .inst{margin:0 0 4px;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.top h1{margin:0 0 6px;font-size:clamp(1.6rem,4vw,2.3rem);line-height:1.15}
+.top p.sub{margin:0;color:var(--muted);max-width:56ch}
+.how{margin:28px 0 8px;align-items:start;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.how div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.how b{display:block;margin-bottom:2px;color:var(--brand)}
+.how span{color:var(--muted);font-size:.94rem}
+nav.grades{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 0;margin-top:8px;
+  border-bottom:1px solid var(--line)}
+nav.grades .wrap{display:flex;gap:8px;flex-wrap:wrap;padding:0}
+nav.grades a{padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);
+  color:var(--ink);text-decoration:none;font-weight:600;font-size:.95rem}
+nav.grades a:hover,nav.grades a:focus-visible{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);outline:none}
+section.grade{padding:32px 0 8px;scroll-margin-top:64px}
+section.grade h2{margin:0 0 4px;font-size:1.5rem}
+section.grade .lead{margin:0 0 16px;color:var(--muted)}
+.cards{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);
+  border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.tag{font-size:.75rem;font-weight:700;letter-spacing:.03em;padding:3px 9px;border-radius:999px}
+.tag.guia{background:var(--tag-guia);color:var(--tag-guia-ink)}
+.tag.conc{background:var(--tag-conc);color:var(--tag-conc-ink)}
+.tag.mat{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.card h3{margin:0 0 6px;font-size:1.1rem;line-height:1.3}
+.card p{margin:0 0 14px;color:var(--muted);font-size:.95rem;flex:1}
+.card .note{font-size:.85rem;margin:-6px 0 14px;color:var(--ink)}
+.card a.open{align-self:flex-start;background:var(--brand);color:var(--brand-ink);text-decoration:none;
+  padding:9px 18px;border-radius:10px;font-weight:700;font-size:.95rem}
+.card a.open:hover,.card a.open:focus-visible{filter:brightness(1.08);outline:2px solid var(--accent);outline-offset:2px}
+footer{margin:48px 0 40px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+footer p{margin:0 0 6px}
+@media (max-width:560px){.top .wrap{flex-direction:column;align-items:flex-start}.top img{width:72px}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <img src="assets/escudo.png" alt="Escudo del Instituto Técnico Veintiséis de Marzo">
+    <div>
+      <p class="inst">Instituto Técnico Veintiséis de Marzo · Barrancabermeja</p>
+      <h1>Guías interactivas · Periodo 4 · 2026</h1>
+      <p class="sub">Aquí están las páginas de estudio de tus clases de Tecnología, Electrónica y Programación. Busca tu grado y abre la de tu materia.</p>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="how" aria-label="Cómo usar este sitio">
+    <div><b>1. Elige tu grado</b><span>Usa los botones de abajo para ir directo a Sexto, Octavo, Décimo o Undécimo.</span></div>
+    <div><b>2. Abre la página de tu materia</b><span>Cada tarjeta dice de qué trata la página y qué clases cubre. Si no sabes cuál usar, pregunta a tu docente.</span></div>
+    <div><b>3. Tu avance se guarda en tu dispositivo</b><span>Lo que escribes queda solo en este navegador y no se envía a ningún servidor. Si cambias de celular o borras los datos del navegador, lo pierdes; descarga tu cuaderno cuando la página lo permita.</span></div>
+  </div>
+
+  <nav class="grades" aria-label="Grados">
+    <div class="wrap">
+      <a href="#sexto">Sexto</a>
+      <a href="#octavo">Octavo</a>
+      <a href="#decimo">Décimo</a>
+      <a href="#once">Undécimo</a>
+    </div>
+  </nav>
+
+  <section class="grade" id="sexto">
+    <h2>Sexto</h2>
+    <p class="lead">Tecnología · grupos 601, 602 y 603</p>
+    <div class="cards">
+      <article class="card">
+        <div class="meta"><span class="tag conc">Concurso</span><span class="tag mat">Tecnología 6</span></div>
+        <h3>¡Conecta! El gran reto de sexto</h3>
+        <p>Juego por equipos para repasar circuitos eléctricos y curiosidades de la tecnología. Cada equipo responde y acumula puntos.</p>
+        <div class="note">Lo dirige el docente en clase.</div>
+        <a class="open" href="sexto/concurso/index.html">Abrir</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="grade" id="octavo">
+    <h2>Octavo</h2>
+    <p class="lead">Tecnología · grupos 802 y 803</p>
+    <div class="cards">
+      <article class="card">
+        <div class="meta"><span class="tag guia">Guía</span><span class="tag mat">Tecnología 8</span></div>
+        <h3>Guía interactiva del periodo 4</h3>
+        <p>Las cuatro guías sobre materiales de construcción: clasificación y cerámicas, vidrio y materiales compuestos, impacto ambiental y selección de materiales, y el cierre del periodo. Incluye un cuaderno del proyecto.</p>
+        <a class="open" href="octavo/guia-interactiva/index.html">Abrir</a>
+      </article>
+      <article class="card">
+        <div class="meta"><span class="tag conc">Concurso</span><span class="tag mat">Tecnología 8</span></div>
+        <h3>¡Construye! El gran reto de octavo</h3>
+        <p>Concurso por equipos con 25 preguntas tomadas de las cuatro guías del periodo.</p>
+        <div class="note">Lo dirige el docente en clase.</div>
+        <a class="open" href="octavo/concurso/index.html">Abrir</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="grade" id="decimo">
+    <h2>Décimo</h2>
+    <p class="lead">Énfasis Electrónica (10 ELE) · proyecto transversal «Estación Escolar Inteligente»</p>
+    <div class="cards">
+      <article class="card">
+        <div class="meta"><span class="tag guia">Guía</span><span class="tag mat">Circuitos 1</span></div>
+        <h3>Circuitos 1: sensores, tiempo y control</h3>
+        <p>Sensores de luz, temperatura y distancia, temporización con millis(), control graduado con PWM e interrupciones, hasta el proyecto integrador. Incluye un cuaderno del proyecto.</p>
+        <a class="open" href="decimo/circuitos-1/index.html">Abrir</a>
+      </article>
+      <article class="card">
+        <div class="meta"><span class="tag guia">Guía</span><span class="tag mat">Digitales 1</span></div>
+        <h3>Digitales 1: de las compuertas al código</h3>
+        <p>Álgebra de Boole, tablas de verdad, mapas de Karnaugh y simplificación de la lógica del proyecto, con un espacio para probar una compuerta. Cierra pasando la lógica a código para Arduino.</p>
+        <a class="open" href="decimo/digitales-1/index.html">Abrir</a>
+      </article>
+      <article class="card">
+        <div class="meta"><span class="tag guia">Guía</span><span class="tag mat">Formulación de Proyectos</span></div>
+        <h3>Estación Escolar Inteligente: formulación del proyecto</h3>
+        <p>Reformulación técnica del problema de cada grupo, objetivos del proyecto, cronograma coordinado con las otras materias y evaluación final.</p>
+        <a class="open" href="decimo/formulacion-proyectos/index.html">Abrir</a>
+      </article>
+      <article class="card">
+        <div class="meta"><span class="tag guia">Guía</span><span class="tag mat">Programación 1</span></div>
+        <h3>Programación 1: guías 2 a 4 en C++</h3>
+        <p>Archivos externos, temporización simulada y el banco de pruebas de escritorio del cierre. Trae un simulador de C++ integrado para ejecutar los retos desde la página.</p>
+        <a class="open" href="decimo/programacion-1/index.html">Abrir</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="grade" id="once">
+    <h2>Undécimo</h2>
+    <p class="lead">Énfasis Electrónica (11 ELEC)</p>
+    <div class="cards">
+      <article class="card">
+        <div class="meta"><span class="tag guia">Guía</span><span class="tag mat">Dibujo Técnico</span></div>
+        <h3>Guía 1: perspectiva de uno y dos puntos de fuga</h3>
+        <p>Teoría del punto de fuga, perspectiva de un punto y perspectiva oblicua de dos puntos, con propósito de aprendizaje y práctica de trazado.</p>
+        <a class="open" href="once/dibujo-tecnico/index.html">Abrir</a>
+      </article>
+      <article class="card">
+        <div class="meta"><span class="tag guia">Guía</span><span class="tag mat">Electrónica 1 + Programación 2</span></div>
+        <h3>Guía 1 (misiones): el interruptor invisible y la alarma de calor</h3>
+        <p>Sesión 1: el transistor como interruptor que Arduino puede controlar. Sesión 2: un sensor de temperatura que activa una alarma. Trabajo en Tinkercad.</p>
+        <a class="open" href="once/electronica-programacion-guia-1/index.html">Abrir</a>
+      </article>
+      <article class="card">
+        <div class="meta"><span class="tag guia">Guía</span><span class="tag mat">Electrónica 1 + Programación 2</span></div>
+        <h3>Guía 2 (misiones): velocidad con PWM y ventilador inteligente</h3>
+        <p>Sesión 3: del LED al motor y control de velocidad con PWM. Sesión 4: ventilador inteligente que combina sensor, transistor y motor, con entrega final.</p>
+        <a class="open" href="once/electronica-programacion-guia-2/index.html">Abrir</a>
+      </article>
+    </div>
+  </section>
+
+  <footer>
+    <p>Docente: Diego Ricardo Páez Ardila · Instituto Técnico Veintiséis de Marzo, Barrancabermeja.</p>
+    <p>Las páginas funcionan sin servidor y se pueden descargar desde el pie de cada una, cuando incluyen esa opción, para usarlas sin internet.</p>
+  </footer>
+
+</main>
+</body>
+</html>
