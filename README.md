@@ -35,6 +35,20 @@ once/electronica-programacion-guia-2/        Electrónica 1 + Programación 2, g
 - El avance y los cuadernos se guardan en `localStorage` del navegador de cada dispositivo. No se envía nada a ningún servidor.
 - Cada página usa una clave de guardado propia, por lo que las respuestas de una página no se mezclan con las de otra aunque estén en el mismo sitio.
 - Si un estudiante cambia de dispositivo o borra los datos del navegador, pierde su avance.
+- En Digitales 1, Circuitos 1 y Tecnología 8, cada guía tiene un informe HTML autónomo que se puede abrir, imprimir o guardar como PDF desde el diálogo de impresión del navegador. También se puede descargar el HTML para abrirlo sin conexión.
+- En Digitales 1, las guías 2 y 3 asignan tres problemas fijos por sorteo desde bancos versionados; las escenas físicas de los diez ejemplos originales responden al circuito que construye el estudiante.
+- Digitales 1, Circuitos 1 y Tecnología 8 permiten descargar e importar un respaldo JSON de progreso; los respaldos solo se deben restaurar en la misma asignatura y versión de esquema.
+- En esas tres materias, las preguntas se responden dentro de cada actividad y «Mis reportes» reúne los informes de las cuatro guías. Los datos se mantienen en ese navegador y no se sincronizan entre dispositivos.
+
+## Actualizar el sitio existente
+
+El sitio está publicado en https://diegopaeza.github.io/clases-26-marzo/ desde la rama `main`, carpeta raíz, con `.nojekyll`. No requiere compilación ni instalar dependencias.
+
+Antes del commit y del push, ejecutar `node scripts/validar_publicacion.cjs` y revisar `git diff --check`. La comprobación valida sintaxis JavaScript, rutas relativas y el catálogo de ejemplos. Después del push, comprobar el despliegue de Pages y las páginas publicadas.
+
+`ejemplos/digitales/ejemplos_digitales.json` conserva el catálogo; la guía utiliza todavía su banco JavaScript incorporado. No se sincronizan automáticamente.
+
+Los temporales (`tmp/`), solucionarios docentes (`output/`) y evidencias locales (`docs/qa/`) se excluyen del repositorio público. Algunas pruebas históricas en `scripts/validation/` requieren esas evidencias locales; no forman una batería reproducible en una clonación nueva. La comprobación de publicación anterior sí es independiente de ellas.
 
 ## Para agregar páginas nuevas
 
