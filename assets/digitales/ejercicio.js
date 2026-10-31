@@ -163,7 +163,7 @@
       return 'Vuelve a leer la regla y tradúcela con las palabras clave (y → AND, o → OR, no → NOT).';
     }
     function comprobarCircuito() {
-      S.intentos++; S.revisado = true;
+      S.intentos++; S.total = (S.total | 0) + 1; S.revisado = true;
       var f = M.faltantes(S.circ);
       if (f.length) {
         S.veredicto = { estado: 'incompleto', titulo: 'Todavía falta elegir ' + (f.length === 2 ? 'las dos compuertas' : 'la compuerta ' + NUM[f[0] - 1]),
@@ -314,7 +314,7 @@
     /* ---------- guardado y recuperación (la guía publicada guarda el avance en el navegador) ---------- */
     function snapshot() {
       return { v: 1, etapa: S.etapa, env: S.env.slice(), pred: S.pred.slice(), predEst: S.predEst ? S.predEst.slice() : null, predOk: S.predOk,
-        circ: M.copiar(S.circ), revisado: S.revisado, intentos: S.intentos, pistas: S.pistas, ayuda: S.ayuda, resuelto: S.resuelto,
+        circ: M.copiar(S.circ), revisado: S.revisado, intentos: S.intentos, total: S.total | 0, pistas: S.pistas, ayuda: S.ayuda, resuelto: S.resuelto,
         casoElegido: S.casoElegido, diag: S.diag, diagOk: S.diagOk, explicacion: S.explicacion };
     }
     function restaurar(x) {
@@ -326,7 +326,7 @@
       S.predEst = Array.isArray(x.predEst) && x.predEst.length === 8 ? x.predEst.map(function (e) { return e === 'ok' || e === 'mal' ? e : null; }) : null;
       S.predOk = !!x.predOk;
       S.circ = { neg: x.circ.neg.map(function (n) { return n ? 1 : 0; }), grupo: x.circ.grupo ? 1 : 0, g1: op(x.circ.g1), g2: op(x.circ.g2) };
-      S.revisado = !!x.revisado; S.intentos = x.intentos | 0; S.pistas = Math.max(0, Math.min(3, x.pistas | 0)); S.ayuda = !!x.ayuda; S.resuelto = !!x.resuelto;
+      S.revisado = !!x.revisado; S.intentos = x.intentos | 0; S.total = Math.max(x.total | 0, S.intentos); S.pistas = Math.max(0, Math.min(3, x.pistas | 0)); S.ayuda = !!x.ayuda; S.resuelto = !!x.resuelto;
       S.casoElegido = !!x.casoElegido; S.diag = typeof x.diag === 'string' && D.TIPOS_ERROR[x.diag] ? x.diag : null; S.diagOk = !!x.diagOk;
       S.explicacion = typeof x.explicacion === 'string' ? x.explicacion.slice(0, 600) : '';
       if (S.diagOk && S.diag) S.fbDiag = textoDiagOk(S.diag);

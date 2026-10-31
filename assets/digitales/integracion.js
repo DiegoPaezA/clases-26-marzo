@@ -29,7 +29,7 @@
     var ok = det ? !!(snap.diagOk && snap.resuelto) : !!(snap.predOk && snap.resuelto);
     return {
       v: 1, ejercicio: spec.id, modo: modo, snap: snap, ok: ok, tabla: !!snap.predOk, circuito: !!snap.resuelto, diagnostico: !!snap.diagOk,
-      ayuda: !!snap.ayuda, intentos: snap.intentos | 0, pistas: snap.pistas | 0,
+      ayuda: !!snap.ayuda, intentos: Math.max(snap.total | 0, snap.intentos | 0), pistas: snap.pistas | 0,
       actualizado: new Date().toISOString(), resueltoEn: ok ? ((previo && previo.resueltoEn) || new Date().toISOString()) : null
     };
   }
