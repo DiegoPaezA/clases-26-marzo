@@ -2784,13 +2784,15 @@ function runProgram(src, extra) {
   return CJ.run(src, Object.assign({ files: S.vfs, fixedTime: S.prefs.fixedTime ? FIXED_TIME : null }, extra || {}));
 }
 
-function renderOutput(box, res, offset) {
+function renderOutput(box, res, offset, hintCode) {
   box.innerHTML = '';
   const adj = l => (l - offset);
   const lineTxt = l => (offset && l <= offset ? 'en el encabezado automático' : (l ? 'Línea ' + adj(l) : ''));
   if (res.compileErrors.length) {
     box.append(h('div', { class: 'msg bad' }, h('b', { text: 'No se ejecutó: el programa tiene ' + res.compileErrors.length + (res.compileErrors.length === 1 ? ' error de compilación' : ' errores de compilación') + '.' }),
       h('ul', null, res.compileErrors.map(e => h('li', null, h('button', { class: 'lnk', type: 'button', 'data-line': adj(e.line), text: lineTxt(e.line) || 'Programa' }), ': ' + e.msg)))));
+    if (hintCode && /TODO/.test(hintCode)) box.append(h('div', { class: 'msg warn small', text: '👉 Tu programa todavía tiene marcas /* TODO */. Cada una es un espacio que debes completar con tu propio código (un número, un valor o los argumentos de una función). Pulsa el número de línea de arriba para ir a donde falta.' }));
+    else if (hintCode && /(decidirEstado|guardarEnLog|contarRegistros)/.test(res.compileErrors.map(e => e.msg).join(' ')) && box.parentNode && box.parentNode.querySelector('.tools')) box.append(h('div', { class: 'msg warn small', text: '👉 Falta una de tus funciones. Pulsa el botón «Insertar mi …()» que está sobre el editor para traerla de tu trabajo anterior.' }));
     return;
   }
   const out = h('pre', { class: 'out' });
@@ -2873,7 +2875,7 @@ function renderCode(b) {
     S.r[b.id] = r;
     save();
     edr.markErrors(res.compileErrors.map(e => e.line - offset).filter(l => l > 0));
-    renderOutput(outBox, res, offset);
+    renderOutput(outBox, res, offset, code);
     $$('.lnk', outBox).forEach(a => a.addEventListener('click', () => edr.goto(parseInt(a.dataset.line, 10))));
     refreshAll();
   }
@@ -2928,7 +2930,7 @@ function renderCode(b) {
   // estado inicial de la salida
   const r0 = S.r[b.id];
   if (r0 && r0.runs) {
-    if (!r0.compiled) renderOutput(outBox, { compileErrors: (r0.errors || []).map(e => ({ line: e.line + (b.wrap ? WRAP_LINES : 0), msg: e.msg })), out: [], warnings: [] }, b.wrap ? WRAP_LINES : 0);
+    if (!r0.compiled) renderOutput(outBox, { compileErrors: (r0.errors || []).map(e => ({ line: e.line + (b.wrap ? WRAP_LINES : 0), msg: e.msg })), out: [], warnings: [] }, b.wrap ? WRAP_LINES : 0, getCode(b.id));
     else {
       const segs = [{ s: r0.out || '', err: false }]; if (r0.errTxt) segs.push({ s: r0.errTxt, err: true });
       renderOutput(outBox, { compileErrors: [], out: segs, warnings: (r0.warn || []).map(w => ({ line: 0, msg: w })), runtimeError: r0.rt ? { line: 0, msg: r0.rt.msg } : null, exitCode: 0 }, 0);
