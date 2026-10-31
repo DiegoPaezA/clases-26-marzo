@@ -1,0 +1,4 @@
+KaTeX 0.16.9 (https://katex.org) · Licencia MIT · Copyright (c) 2013-2020 Khan Academy y colaboradores.
+Se incluyen solo katex.min.js, katex.min.css y las fuentes .woff2 para que las ecuaciones funcionen
+sin conexión y con rutas relativas en GitHub Pages. Texto completo de la licencia:
+https://github.com/KaTeX/KaTeX/blob/main/LICENSE
