@@ -2213,7 +2213,7 @@ z
       <div class="grid2">
         <div>
           <h3 style="font-size:17px">Prueba antes en este simulador</h3>
-          <label class="f" for="sim9">Temperatura del sensor: <span id="sim9l">25 °C</span></label>
+          <label class="f" for="sim9">👆 Mueve el deslizador · Temperatura del sensor: <span id="sim9l">25 °C</span></label>
           <input type="range" id="sim9" min="0" max="50" step="0.5" value="25" style="width:100%;accent-color:var(--prog)">
           <p style="margin-top:10px"><span class="led" id="sim9led"></span><b id="sim9d">D9: LOW</b></p>
         </div>
@@ -2245,9 +2245,9 @@ z
       <div class="grid2">
         <div>
           <h3 style="font-size:17px">Mira cómo se llena el arreglo</h3>
-          <label class="f" for="rxT">Temperatura: <span id="rxTl">25 °C</span></label>
+          <label class="f" for="rxT">👆 Mueve el deslizador · Temperatura: <span id="rxTl">25 °C</span></label>
           <input type="range" id="rxT" min="0" max="50" step="0.5" value="25" style="width:100%;accent-color:#c98a1c">
-          <div class="row" style="margin-top:8px"><label for="rxN" class="xs">N:</label><select id="rxN" style="width:80px"><option>3</option><option>4</option><option selected>5</option><option>6</option><option>8</option><option>10</option></select><button class="btn" id="rxRead">Leer</button><button class="btn ghost" id="rxAuto">▶ Automático</button><button class="btn ghost" id="rxClr">Reiniciar</button></div>
+          <div class="row" style="margin-top:8px"><label for="rxN" class="xs">N:</label><select id="rxN" style="width:80px"><option>3</option><option>4</option><option selected>5</option><option>6</option><option>8</option><option>10</option></select><button class="btn" id="rxRead" title="Cada clic guarda una lectura nueva en el arreglo">👆 Leer (1 lectura)</button><button class="btn ghost" id="rxAuto">▶ Automático</button><button class="btn ghost" id="rxClr">Reiniciar</button></div>
         </div>
         <div><div class="lcdwrap"><div class="lcd" id="lcdx"></div></div><p style="margin-top:8px"><span class="led" id="rxLed"></span><b id="rxD">D9: LOW</b></p><div class="buf" id="rxBuf"></div></div>
       </div>
@@ -2297,6 +2297,7 @@ const OPT3=['Enciende normal','Enciende débil','No enciende'];
 document.querySelectorAll('select.opt3').forEach(s=>{s.innerHTML='<option value="">Elige</option>'+OPT3.map(o=>'<option>'+o+'</option>').join('')});
 
 /* tabs */
+function goName(){go('inicio');const n=$('nombre');if(n){n.focus();n.scrollIntoView({block:'center'});}let m=$('nombreMsg');if(!m&&n){m=document.createElement('p');m.id='nombreMsg';m.className='fb bad';m.setAttribute('role','alert');n.parentNode.appendChild(m)}if(m){m.textContent='👆 Escribe aquí tu nombre (o el del equipo) para poder descargar el reporte.';n.addEventListener('input',()=>{m.textContent=''},{once:true})}}
 function go(t){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id===t));
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t?'true':'false'));S._tab=t;save();if(t==='reporte')summary();window.scrollTo(0,0)}
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>go(b.dataset.tab)));
@@ -2337,7 +2338,7 @@ function paint(){let n=0;for(let m=1;m<=10;m++){const el=document.querySelector(
   const a=document.querySelector('.map a[href="#m'+m+'"]');if(a)a.classList.toggle('done',d)}
   $('gcount').textContent=n+' de 9';$('gbar').style.width=(n/9*100)+'%'}
 document.querySelectorAll('[data-finish]').forEach(b=>b.addEventListener('click',()=>{const m=b.dataset.finish;const miss=reqOf(m).filter(i=>!filled(i));
-  if(miss.length){fb('ff'+m,'Te falta completar '+miss.length+' dato(s) del registro.','bad');const el=$(miss[0]);el.focus();el.scrollIntoView({block:'center'});return}
+  if(miss.length){const lb=document.querySelector('label[for="'+miss[0]+'"]');fb('ff'+m,'Te falta completar '+miss.length+' dato(s) del registro'+(lb?'. Empieza por: <b>'+lb.textContent.replace(/[<>&]/g,'').trim().slice(0,70)+'</b> (👆 ya te llevé a ese campo)':'')+'.','bad');const el=$(miss[0]);el.focus();el.scrollIntoView({block:'center'});return}
   if(!filled('nombre')){fb('ff'+m,'Escribe tu nombre en la pestaña Inicio.','bad');return}
   S['done'+m]=true;save();paint();fb('ff'+m,'¡Misión '+m+' completa!','ok')}));
 paint();
@@ -2404,8 +2405,8 @@ const disp=id=>{const e=$(id);if(e&&e.tagName==='SELECT'){const o=e.options[e.se
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function reportHTML(k){const rows=FIELDS[k].map(([m,fs])=>'<h2>'+(S['done'+m]?'✅':'⬜')+' Misión '+(m===10?'extra':m)+' · '+esc(MIS[m])+'</h2><table>'+fs.map(([i,l])=>'<tr><th>'+esc(l)+'</th><td>'+(filled(i)?esc(disp(i)):'<i>sin respuesta</i>')+'</td></tr>').join('')+'</table>').join('');
   return '<!doctype html><html lang="es"><meta charset="utf-8"><title>Reporte Sesión '+k+'</title><style>body{font:14px/1.45 Arial,sans-serif;max-width:800px;margin:24px auto;color:#17222d;padding:0 14px}h1{color:#1F4E79;font-size:20px;border-bottom:2px solid #1F4E79;padding-bottom:6px}h2{font-size:15px;margin:16px 0 4px;color:#1F4E79}table{border-collapse:collapse;width:100%}th,td{border:1px solid #cdd6df;padding:6px 8px;text-align:left;vertical-align:top}th{width:38%;background:#eef3f8}td{white-space:pre-wrap;font-family:inherit}p.s{font-size:12px;color:#566472}</style>'+
-  '<h1>Reporte Sesión '+k+' · Guía 1 · Electrónica 1 + Programación 2</h1><p><b>Estudiantes:</b> '+esc(S.nombre||'')+' · <b>Curso:</b> '+esc(S.curso||'11 ELEC')+' · <b>Fecha:</b> '+new Date().toLocaleString('es-CO')+'</p>'+rows+'<p class="s">Instituto Técnico Veintiséis de Marzo · Reporte generado desde el laboratorio de misiones.</p></html>'}
-document.querySelectorAll('[data-rep]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.rep;if(!filled('nombre')){alert('Escribe tu nombre en Inicio.');return}
+  '<h1>Reporte Sesión '+k+' · Guía 1 · Electrónica 1 + Programación 2</h1><p><b>Progreso:</b> '+FIELDS[k].filter(([m])=>m<10&&S['done'+m]).length+' de '+FIELDS[k].filter(([m])=>m<10).length+' misiones terminadas'+(k===2&&S['done10']?' · reto extra terminado':'')+'.</p><p><b>Estudiantes:</b> '+esc(S.nombre||'')+' · <b>Curso:</b> '+esc(S.curso||'11 ELEC')+' · <b>Fecha:</b> '+new Date().toLocaleString('es-CO')+'</p>'+rows+'<p class="s">Instituto Técnico Veintiséis de Marzo · Reporte generado desde el laboratorio de misiones.</p></html>'}
+document.querySelectorAll('[data-rep]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.rep;if(!filled('nombre')){goName();return}
   const blob=new Blob([reportHTML(k)],{type:'text/html;charset=utf-8'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;
   a.download='Reporte_S'+k+'_'+String(S.nombre).replace(/[^\wáéíóúñÁÉÍÓÚÑ]+/g,'_').slice(0,40)+'.html';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)}));
 document.querySelectorAll('[data-pdf]').forEach(b=>b.addEventListener('click',()=>{const w=window.open('','_blank');if(!w){alert('Permite ventanas emergentes para guardar como PDF.');return}w.document.write(reportHTML(b.dataset.pdf));w.document.close();setTimeout(()=>w.print(),400)}));
